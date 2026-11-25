@@ -6,5 +6,5 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/alfred/report/` |  |  |
-| GET | `/api/v1/alfred/async/{id}/` |  |  |
+| GET | `/api/v1/alfred/report/` | `IReports.GenerateAsync` | `ReportsTests.GenerateAsync_SendsGetWithTheResource` |
+| GET | `/api/v1/alfred/async/{id}/` | `IReports.GetAsyncReportAsync` | `ReportsTests.GetAsyncReportAsync_SendsGetToTheJob` |
