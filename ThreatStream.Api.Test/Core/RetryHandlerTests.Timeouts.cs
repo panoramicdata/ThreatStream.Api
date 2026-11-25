@@ -71,7 +71,7 @@ public partial class RetryHandlerTests
 		stub.Enqueue(HttpStatusCode.OK, """{"max_confidence":5}""");
 		using var client = TestClient.Create(stub, o => (o.MaxRetries, o.RetryBaseDelay) = (1, TimeSpan.Zero));
 
-		var trend = await client.Confidence.GetTrendAsync("1.2.3.4", TestContext.Current.CancellationToken);
+		var trend = await client.Confidence.GetTrendAsync("192.0.2.4", TestContext.Current.CancellationToken);
 
 		trend.MaxConfidence.Should().Be(5);
 		stub.Calls.Should().HaveCount(2);

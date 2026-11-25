@@ -114,9 +114,9 @@ public class IncidentsTests
 	[Fact]
 	public async Task ListAssociatedWithValueAsync_SendsTheValue()
 	{
-		var call = await TestClient.CaptureAsync((client, ct) => client.Incidents.ListAssociatedWithValueAsync("1.2.3.4", null, ct), Page(IncidentJson));
+		var call = await TestClient.CaptureAsync((client, ct) => client.Incidents.ListAssociatedWithValueAsync("192.0.2.4", null, ct), Page(IncidentJson));
 
-		call.ShouldBe(HttpMethod.Get, "/api/v1/incident/associated_with_intelligence/", "?value=1.2.3.4");
+		call.ShouldBe(HttpMethod.Get, "/api/v1/incident/associated_with_intelligence/", "?value=192.0.2.4");
 	}
 
 	[Fact]

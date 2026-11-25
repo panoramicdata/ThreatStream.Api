@@ -15,8 +15,8 @@ public class ObservableImportsTests
 	{
 		var request = new ObservableImportRequest
 		{
-			File = new ThreatStreamFile("iocs.csv", "value,itype,tags\n1.2.3.4,brute_ip,phishing\n"u8.ToArray(), "text/csv"),
-			DataText = "1.2.3.4",
+			File = new ThreatStreamFile("iocs.csv", "value,itype,tags\n192.0.2.4,brute_ip,phishing\n"u8.ToArray(), "text/csv"),
+			DataText = "192.0.2.4",
 			Url = "https://feed.example/list.txt",
 			DataType = "structured",
 			ThreatType = "malware",
@@ -54,8 +54,8 @@ public class ObservableImportsTests
 
 		call.ShouldBe(HttpMethod.Post, "/api/v2/intelligence/import/");
 		PartsOf(call).Should().Equal(
-			("file", "iocs.csv", "text/csv", "value,itype,tags\n1.2.3.4,brute_ip,phishing\n"),
-			Field("datatext", "1.2.3.4"),
+			("file", "iocs.csv", "text/csv", "value,itype,tags\n192.0.2.4,brute_ip,phishing\n"),
+			Field("datatext", "192.0.2.4"),
 			Field("url", "https://feed.example/list.txt"),
 			Field("data_type", "structured"),
 			Field("threat_type", "malware"),
@@ -149,12 +149,12 @@ public class ObservableImportsTests
 			},
 			Objects =
 			[
-				new ObservableImportObject { SourceIp = "1.2.3.4", Itype = "bot_ip", Severity = "high" },
+				new ObservableImportObject { SourceIp = "192.0.2.4", Itype = "bot_ip", Severity = "high" },
 				new ObservableImportObject { Domain = "idfsdszqylwjzq.biz", Itype = "mal_domain" },
 				new ObservableImportObject { Url = "http://malicious.example/a.exe", Itype = "mal_url" },
 				new ObservableImportObject { Email = "email@domain.example", Itype = "compromised_email", Confidence = 50 },
 				new ObservableImportObject { Md5 = "1d37556b8aeb5cb5fbf08cd5b4790075", Itype = "apt_md5", ExpirationTs = Expiry },
-				new ObservableImportObject { Value = "106.210.164.198", Itype = "mal_ip" }
+				new ObservableImportObject { Value = "203.0.113.198", Itype = "mal_ip" }
 			]
 		};
 
@@ -167,10 +167,10 @@ public class ObservableImportsTests
 	public async Task ImportWithoutApprovalAsync_MinimalObservable_SendsOnlyObjects()
 	{
 		var call = await TestClient.CaptureAsync(
-			(client, ct) => client.ObservableImports.ImportWithoutApprovalAsync(new ObservableBulkImportRequest { Objects = [new ObservableImportObject { SourceIp = "5.253.63.134", Itype = "bot_ip" }] }, ct),
+			(client, ct) => client.ObservableImports.ImportWithoutApprovalAsync(new ObservableBulkImportRequest { Objects = [new ObservableImportObject { SourceIp = "203.0.113.134", Itype = "bot_ip" }] }, ct),
 			string.Empty);
 
-		call.ShouldBe(HttpMethod.Patch, "/api/v2/intelligence/", body: """{"objects":[{"itype":"bot_ip","srcip":"5.253.63.134"}]}""");
+		call.ShouldBe(HttpMethod.Patch, "/api/v2/intelligence/", body: """{"objects":[{"itype":"bot_ip","srcip":"203.0.113.134"}]}""");
 	}
 
 	[Fact]
@@ -184,10 +184,10 @@ public class ObservableImportsTests
 		+ "\"classification\":\"private\",\"confidence\":60,\"source_confidence_weight\":100,\"expiration_ts\":\"2017-01-26T00:00:00Z\","
 		+ "\"severity\":\"high\",\"source_feed_id\":5,\"tags\":[{\"name\":\"public_tag\"}],\"trustedcircles\":[13],"
 		+ "\"source_locations\":[\"europe\"],\"target_locations\":[\"US-FL\"],\"target_industry\":[\"government-regional\"],\"remote_api\":true},"
-		+ "\"objects\":[{\"itype\":\"bot_ip\",\"srcip\":\"1.2.3.4\",\"severity\":\"high\"},"
+		+ "\"objects\":[{\"itype\":\"bot_ip\",\"srcip\":\"192.0.2.4\",\"severity\":\"high\"},"
 		+ "{\"itype\":\"mal_domain\",\"domain\":\"idfsdszqylwjzq.biz\"},"
 		+ "{\"itype\":\"mal_url\",\"url\":\"http://malicious.example/a.exe\"},"
 		+ "{\"itype\":\"compromised_email\",\"email\":\"email@domain.example\",\"confidence\":50},"
 		+ "{\"itype\":\"apt_md5\",\"md5\":\"1d37556b8aeb5cb5fbf08cd5b4790075\",\"expiration_ts\":\"2017-01-26T00:00:00Z\"},"
-		+ "{\"itype\":\"mal_ip\",\"value\":\"106.210.164.198\"}]}";
+		+ "{\"itype\":\"mal_ip\",\"value\":\"203.0.113.198\"}]}";
 }

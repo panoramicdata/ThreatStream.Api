@@ -45,7 +45,7 @@ public class ReadOnlyHandlerTests
 	[InlineData("POST", "api/v2/intelligence/123/clone/")]
 	[InlineData("POST", "api/v1/intelligence/")]
 	[InlineData("POST", "api/v1/threat_model_search/x/")]
-	[InlineData("POST", "api/v1/integration_package/direct/ip/1.2.3.4/")]
+	[InlineData("POST", "api/v1/integration_package/direct/ip/192.0.2.4/")]
 	[InlineData("POST", "api/v1/snapshot/")]
 	[InlineData("POST", "api/v1/submit/new/")]
 	[InlineData("POST", "api/v1/orgadmin/")]

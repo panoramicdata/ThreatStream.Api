@@ -70,7 +70,7 @@ public class ClientTests
 		var stub = TestClient.Stub(Trend);
 		using var client = TestClient.Create(stub, o => o.BaseUrl = "https://proxy.test/threatstream");
 
-		await client.Confidence.GetTrendAsync("1.2.3.4", Ct);
+		await client.Confidence.GetTrendAsync("192.0.2.4", Ct);
 
 		stub.Calls[0].Uri.AbsolutePath.Should().Be("/threatstream/api/v1/inteldetails/confidence_trend/");
 		stub.Calls[0].Authorization.Should().Be(TestClient.ApiKeyAuthorization);
@@ -82,7 +82,7 @@ public class ClientTests
 		var stub = TestClient.Stub(Trend);
 		using var client = TestClient.Create(stub);
 
-		await client.Confidence.GetTrendAsync("1.2.3.4", Ct);
+		await client.Confidence.GetTrendAsync("192.0.2.4", Ct);
 
 		stub.Calls[0].Uri.ToString().Should().NotContain("fake-key").And.NotContain("analyst");
 	}

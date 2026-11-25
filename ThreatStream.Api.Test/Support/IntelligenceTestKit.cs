@@ -23,7 +23,7 @@ internal static class IntelligenceTestKit
 			"feed_id": 0,
 			"id": "11202475",
 			"import_session_id": 346928,
-			"ip": "211.169.202.2",
+			"ip": "203.0.113.2",
 			"is_anonymous": false,
 			"is_editable": false,
 			"is_public": "1",
@@ -42,7 +42,7 @@ internal static class IntelligenceTestKit
 			"source_created": "2015-04-12T00:00:00",
 			"source_modified": "2015-04-13T00:00:00",
 			"source_reported_confidence": 90,
-			"srcip": "211.169.202.2",
+			"srcip": "203.0.113.2",
 			"status": "active",
 			"subtype": null,
 			"tags": [{"id": "abc1", "name": "energetic-bear", "tlp": "red", "org_id": 2}],
@@ -53,7 +53,7 @@ internal static class IntelligenceTestKit
 			"type": "ip",
 			"update_id": "2237854",
 			"uuid": "0a5b2a6e-8f6d-4f0c-9d3e-0123456789ab",
-			"value": "211.169.202.2"
+			"value": "203.0.113.2"
 		}
 		""";
 
@@ -68,7 +68,7 @@ internal static class IntelligenceTestKit
 	{
 		observable.Id.Should().Be(11202475);
 		observable.ResourceUri.Should().Be("/api/v2/intelligence/11202475/");
-		observable.Value.Should().Be("211.169.202.2");
+		observable.Value.Should().Be("203.0.113.2");
 		observable.Type.Should().Be("ip");
 		observable.Itype.Should().Be("apt_ip");
 		observable.ThreatType.Should().Be("apt");
@@ -89,8 +89,8 @@ internal static class IntelligenceTestKit
 		observable.Subtype.Should().BeNull();
 		observable.Asn.Should().Be("3786");
 		observable.Country.Should().Be("IN");
-		observable.Ip.Should().Be("211.169.202.2");
-		observable.SourceIp.Should().Be("211.169.202.2");
+		observable.Ip.Should().Be("203.0.113.2");
+		observable.SourceIp.Should().Be("203.0.113.2");
 		observable.Org.Should().Be("Example Telecom");
 		observable.Rdns.Should().Be("host.example.net");
 		observable.Latitude.Should().Be(28.6667);

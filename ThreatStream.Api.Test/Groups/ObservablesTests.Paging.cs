@@ -8,14 +8,14 @@ public partial class ObservablesTests
 {
 	private const string Moment = "2014-10-02T20%3A44%3A35Z";
 
-	private const string AllFiltersQuery = "?q=confidence%3E%3D90&search_filter=398&value=1.2.3.4&value__contains=example&value__startswith=http"
+	private const string AllFiltersQuery = "?q=confidence%3E%3D90&search_filter=398&value=192.0.2.4&value__contains=example&value__startswith=http"
 		+ "&type=ip&itype=mal_ip%2Cc2_ip&threat_type=malware&status=active&subtype=SHA256&tlp=red&is_public=true"
 		+ "&tags.name=energetic-bear&meta.severity=low&meta.maltype=zeus&meta.detail=d&meta.detail2=d2&feed_id=0&import_session_id=482"
 		+ "&trusted_circle_ids=1%2C2&target_industry=financial-services&target_locations=europe&source_locations=US-FL&uuid=u"
 		+ "&full_count=1&local_only=true&remote_api=true&confidence__gte=80&confidence__lte=99&source_reported_confidence__gte=50"
 		+ "&retina_confidence__gte=40&created_ts__gte=" + Moment + "&created_ts__lt=" + Moment + "&modified_ts__gte=" + Moment
 		+ "&modified_ts__lt=" + Moment + "&update_id__gt=11849&source_created__gte=" + Moment + "&source_modified__gte=" + Moment
-		+ "&country=CN&asn=3786&ip=1.2.3.4&org=o&rdns=r&limit=0&offset=20&order_by=update_id";
+		+ "&country=CN&asn=3786&ip=192.0.2.4&org=o&rdns=r&limit=0&offset=20&order_by=update_id";
 
 	private static string Page(string next, params long[] updateIds)
 		=> $$"""{"meta":{"next":{{next}}},"objects":[{{string.Join(',', updateIds.Select(u => $$"""{"id":{{u}},"update_id":{{u}}}"""))}}]}""";

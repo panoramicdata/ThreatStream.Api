@@ -31,7 +31,7 @@ public partial class WhitelistTests
 	private const string Csv = """
 		value_type,value,notes
 		domain,*foo.wildcarddomain.com,some notes on foo
-		ip,8.8.8.8,notes on ip address
+		ip,198.51.100.8,notes on ip address
 		""";
 
 	[Fact]

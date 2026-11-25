@@ -18,9 +18,9 @@ public class ConfidenceTests
 	[Fact]
 	public async Task GetTrendAsync_SendsGetWithTheValue()
 	{
-		var call = await TestClient.CaptureAsync((client, ct) => client.Confidence.GetTrendAsync("118.172.14.234", ct), TrendJson);
+		var call = await TestClient.CaptureAsync((client, ct) => client.Confidence.GetTrendAsync("198.51.100.234", ct), TrendJson);
 
-		call.ShouldBe(HttpMethod.Get, "/api/v1/inteldetails/confidence_trend/", "?value=118.172.14.234");
+		call.ShouldBe(HttpMethod.Get, "/api/v1/inteldetails/confidence_trend/", "?value=198.51.100.234");
 	}
 
 	[Fact]
@@ -34,7 +34,7 @@ public class ConfidenceTests
 	[Fact]
 	public async Task GetTrendAsync_MapsEveryField()
 	{
-		var trend = await TestClient.ReadAsync((client, ct) => client.Confidence.GetTrendAsync("118.172.14.234", ct), TrendJson);
+		var trend = await TestClient.ReadAsync((client, ct) => client.Confidence.GetTrendAsync("198.51.100.234", ct), TrendJson);
 
 		trend.MinConfidence.Should().Be(66);
 		trend.AverageConfidence.Should().Be(69.5);
@@ -57,7 +57,7 @@ public class ConfidenceTests
 	[Fact]
 	public Task GetTrendAsync_Error_RaisesThreatStreamApiException()
 		=> TestClient.ShouldFailAsync(
-			(client, ct) => client.Confidence.GetTrendAsync("118.172.14.234", ct),
+			(client, ct) => client.Confidence.GetTrendAsync("198.51.100.234", ct),
 			HttpStatusCode.Unauthorized,
 			"""{"message": "Invalid credentials"}""",
 			"Invalid credentials");

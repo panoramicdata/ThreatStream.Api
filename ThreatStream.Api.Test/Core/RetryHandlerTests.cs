@@ -190,7 +190,7 @@ public partial class RetryHandlerTests
 		stub.Enqueue(HttpStatusCode.TooManyRequests, """{"error":"Rate limit exceeded"}""", r => r.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.FromSeconds(90)));
 		using var client = TestClient.Create(stub, o => o.MaxRetries = 3);
 
-		var act = () => client.Confidence.GetTrendAsync("1.2.3.4", TestContext.Current.CancellationToken);
+		var act = () => client.Confidence.GetTrendAsync("192.0.2.4", TestContext.Current.CancellationToken);
 
 		var thrown = await act.Should().ThrowAsync<ThreatStreamApiException>();
 		thrown.Which.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);

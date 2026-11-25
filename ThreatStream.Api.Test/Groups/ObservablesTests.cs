@@ -24,7 +24,7 @@ public partial class ObservablesTests
 		{
 			Query = "confidence>=90",
 			SearchFilter = 398,
-			Value = "1.2.3.4",
+			Value = "192.0.2.4",
 			ValueContains = "example",
 			ValueStartsWith = "http",
 			Type = "ip",
@@ -62,7 +62,7 @@ public partial class ObservablesTests
 			SourceModifiedSince = since,
 			Country = "CN",
 			Asn = "3786",
-			Ip = "1.2.3.4",
+			Ip = "192.0.2.4",
 			Org = "o",
 			Rdns = "r",
 			Limit = 0,
