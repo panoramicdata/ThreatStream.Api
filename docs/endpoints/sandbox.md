@@ -6,7 +6,7 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| POST | `/api/v1/submit/new/` |  |  |
-| GET | `/api/v1/submit/search/` |  |  |
-| GET | `/api/v1/submit/{id}/` |  |  |
-| GET | `/api/v1/submit/{id}/report/` |  |  |
+| POST | `/api/v1/submit/new/` | `ISandboxSubmissions.SubmitAsync` | `SandboxSubmissionsTests.SubmitAsync_SendsMultipartWithEveryField` |
+| GET | `/api/v1/submit/search/` | `ISandboxSubmissions.SearchAsync` | `SandboxSubmissionsTests.SearchAsync_SendsGetWithTheKeyword` |
+| GET | `/api/v1/submit/{id}/` | `ISandboxSubmissions.GetAsync` | `SandboxSubmissionsTests.GetAsync_SendsGetToTheDetonation` |
+| GET | `/api/v1/submit/{id}/report/` | `ISandboxSubmissions.GetReportAsync` | `SandboxSubmissionsTests.GetReportAsync_SendsGetToTheReport` |

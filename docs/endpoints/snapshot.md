@@ -6,6 +6,6 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/snapshot/` |  |  |
-| POST | `/api/v1/snapshot/` |  |  |
-| GET | `/api/v1/snapshot/{id}/` |  |  |
+| GET | `/api/v1/snapshot/` | `ISnapshots.ListAsync` | `SnapshotsTests.ListAsync_SendsGetWithTheFilters` |
+| POST | `/api/v1/snapshot/` | `ISnapshots.CreateAsync` | `SnapshotsTests.CreateAsync_SendsPostWithTheConfig` |
+| GET | `/api/v1/snapshot/{id}/` | `ISnapshots.GetAsync` | `SnapshotsTests.GetAsync_SendsGetToTheSnapshot` |

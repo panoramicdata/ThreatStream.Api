@@ -6,4 +6,4 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/feed/` |  |  |
+| GET | `/api/v1/feed/` | `IFeeds.ListAsync` | `FeedsTests.ListAsync_SendsGetWithTheFilters` |
