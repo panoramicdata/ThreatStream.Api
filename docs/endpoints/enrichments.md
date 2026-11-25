@@ -6,7 +6,7 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/integration_package/direct/ip/{IP_address}/` |  |  |
-| GET | `/api/v1/pdns/{domain or ip}/{value}/` |  |  |
-| GET | `/api/v1/integration_package/direct/` |  |  |
-| POST | `/api/v1/integration_package/direct/` |  |  |
+| GET | `/api/v1/integration_package/direct/ip/{IP_address}/` | `IEnrichments.GetIpAsync` | `EnrichmentsTests.GetIpAsync_SendsGetWithTheServiceName` |
+| GET | `/api/v1/pdns/{domain or ip}/{value}/` | `IPassiveDns.GetAsync` | `PassiveDnsTests.GetAsync_SendsGetForADomain` |
+| GET | `/api/v1/integration_package/direct/` | `IEnrichments.LookupWithGetAsync` | `EnrichmentsTests.LookupWithGetAsync_SendsTheLookupInTheQuery` |
+| POST | `/api/v1/integration_package/direct/` | `IEnrichments.LookupAsync` | `EnrichmentsTests.LookupAsync_PostsTheLookup` |
