@@ -22,7 +22,7 @@ public sealed partial class ObservableImportRequest
 
 	/// <summary>Threat bulletins to associate the observables with (<c>tipreports</c>).</summary>
 	[JsonPropertyName("tipreports")]
-	public IReadOnlyList<long>? TipReports { get; init; }
+	public IReadOnlyList<long>? ThreatBulletins { get; init; }
 
 	/// <summary>TTPs to associate the observables with (<c>ttps</c>).</summary>
 	[JsonPropertyName("ttps")]

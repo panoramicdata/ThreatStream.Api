@@ -1,4 +1,5 @@
 using Refit;
+using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Models.ThreatModelSearch;
 
@@ -22,12 +23,11 @@ public sealed partial class ThreatModelSearchOptions : ListOptions
 	public long? SearchFilter { get; set; }
 
 	/// <summary>
-	/// The entity type, comma-separated for several (<c>model_type</c>): <c>actor</c>, <c>attackpattern</c>,
-	/// <c>campaign</c>, <c>incident</c>, <c>malware</c>, <c>signature</c>, <c>tipreport</c>, <c>ttp</c> or
-	/// <c>vulnerability</c>. Vulnerabilities are only found when asked for here.
+	/// The entity types to find, sent comma-separated (<c>model_type</c>). Vulnerabilities are only found when asked for
+	/// here.
 	/// </summary>
 	[AliasAs("model_type")]
-	public string? ModelType { get; set; }
+	public IReadOnlyList<ThreatModelType>? ModelType { get; set; }
 
 	/// <summary>
 	/// A keyword search, as in the user interface, over names, aliases, descriptions and tags (<c>value</c>).
@@ -59,16 +59,13 @@ public sealed partial class ThreatModelSearchOptions : ListOptions
 	[AliasAs("is_public")]
 	public bool? IsPublic { get; set; }
 
-	/// <summary>
-	/// The publication status: <c>new</c>, <c>pending_review</c>, <c>review_requested</c>, <c>reviewed</c> or
-	/// <c>published</c> (<c>publication_status</c>).
-	/// </summary>
+	/// <summary>The publication status (<c>publication_status</c>).</summary>
 	[AliasAs("publication_status")]
-	public string? PublicationStatus { get; set; }
+	public ThreatModelPublicationStatus? PublicationStatus { get; set; }
 
 	/// <summary>
 	/// The signature type, such as <c>Snort</c>, <c>YARA</c> or <c>Splunk Query</c> (<c>signature$type</c>); needs
-	/// <see cref="ModelType"/> to include <c>signature</c>.
+	/// <see cref="ModelType"/> to include <see cref="ThreatModelType.Signature"/>.
 	/// </summary>
 	[AliasAs("signature$type")]
 	public string? SignatureType { get; set; }

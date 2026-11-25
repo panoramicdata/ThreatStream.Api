@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Models.ThreatModelSearch;
 
@@ -13,20 +14,17 @@ namespace ThreatStream.Api.Models.ThreatModelSearch;
 /// </remarks>
 public sealed class ThreatModelSearchResult : ThreatStreamResource
 {
-	/// <summary>The entity type, such as <c>actor</c>, <c>malware</c> or <c>tipreport</c> (<c>model_type</c>).</summary>
+	/// <summary>The entity type (<c>model_type</c>), such as <see cref="ThreatModelType.Actor"/>; a type this library does not know reads as <see cref="ThreatModelType.Unknown"/>.</summary>
 	[JsonPropertyName("model_type")]
-	public string? ModelType { get; init; }
+	public ThreatModelType? ModelType { get; init; }
 
 	/// <summary>The entity's name (<c>name</c>).</summary>
 	[JsonPropertyName("name")]
 	public string? Name { get; init; }
 
-	/// <summary>
-	/// The publication status: <c>new</c>, <c>pending_review</c>, <c>review_requested</c>, <c>reviewed</c> or
-	/// <c>published</c> (<c>publication_status</c>).
-	/// </summary>
+	/// <summary>The publication status (<c>publication_status</c>).</summary>
 	[JsonPropertyName("publication_status")]
-	public string? PublicationStatus { get; init; }
+	public ThreatModelPublicationStatus? PublicationStatus { get; init; }
 
 	/// <summary>The Traffic Light Protocol designation (<c>tlp</c>).</summary>
 	[JsonPropertyName("tlp")]

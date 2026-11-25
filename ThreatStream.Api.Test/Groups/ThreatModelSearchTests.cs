@@ -1,6 +1,7 @@
 using System.Net;
 using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ThreatModelSearch;
+using ThreatStream.Api.Models.ThreatModels;
 using ThreatStream.Api.Test.Support;
 using static ThreatStream.Api.Test.Support.IntelligenceTestKit;
 
@@ -55,7 +56,7 @@ public class ThreatModelSearchTests
 		{
 			Query = "name=\"x\"",
 			SearchFilter = 7,
-			ModelType = "signature,actor",
+			ModelType = [ThreatModelType.Signature, ThreatModelType.Actor],
 			Value = "bear",
 			Name = "Fancy Bear",
 			NameContains = "Bear",
@@ -63,7 +64,7 @@ public class ThreatModelSearchTests
 			TagName = "malware,community-threat-briefing",
 			Tlp = Tlp.Red,
 			IsPublic = false,
-			PublicationStatus = "new",
+			PublicationStatus = ThreatModelPublicationStatus.New,
 			SignatureType = "CybOX",
 			FeedId = 72,
 			OrganizationId = 2,
@@ -111,9 +112,9 @@ public class ThreatModelSearchTests
 		var actor = page.Objects[0];
 		actor.Id.Should().Be(775054);
 		actor.ResourceUri.Should().Be("/api/v1/actor/775054/");
-		actor.ModelType.Should().Be("actor");
+		actor.ModelType.Should().Be(ThreatModelType.Actor);
 		actor.Name.Should().Be("Fancy Bear");
-		actor.PublicationStatus.Should().Be("published");
+		actor.PublicationStatus.Should().Be(ThreatModelPublicationStatus.Published);
 		actor.Tlp.Should().Be(Tlp.Amber);
 		actor.IsPublic.Should().BeTrue();
 		actor.Tags.Should().ContainSingle().Which.Name.Should().Be("russia");
@@ -129,7 +130,7 @@ public class ThreatModelSearchTests
 		actor.Uuid.Should().Be("1d6e1a4e-0000-4000-8000-000000000001");
 		actor.AdditionalProperties.Keys.Should().BeEquivalentTo("aliases", "organization");
 		var signature = page.Objects[1];
-		signature.ModelType.Should().Be("signature");
+		signature.ModelType.Should().Be(ThreatModelType.Signature);
 		signature.Tags.Should().BeEmpty();
 		signature.AdditionalProperties["signature_type"].GetString().Should().Be("Snort");
 	}

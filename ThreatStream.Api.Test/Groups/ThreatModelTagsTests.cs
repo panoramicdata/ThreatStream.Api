@@ -1,6 +1,7 @@
 using System.Net;
 using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ThreatModelTags;
+using ThreatStream.Api.Models.ThreatModels;
 using ThreatStream.Api.Test.Support;
 
 namespace ThreatStream.Api.Test.Groups;
@@ -25,7 +26,7 @@ public class ThreatModelTagsTests
 	[Fact]
 	public async Task BulkTagAsync_PostsTheIdsAndTags()
 	{
-		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelTagEntityType.Actor, Example, ct), "{}");
+		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelType.Actor, Example, ct), "{}");
 
 		call.ShouldBe(
 			HttpMethod.Post,
@@ -34,16 +35,16 @@ public class ThreatModelTagsTests
 	}
 
 	[Theory]
-	[InlineData(ThreatModelTagEntityType.Actor, "actor")]
-	[InlineData(ThreatModelTagEntityType.AttackPattern, "attackpattern")]
-	[InlineData(ThreatModelTagEntityType.Campaign, "campaign")]
-	[InlineData(ThreatModelTagEntityType.Incident, "incident")]
-	[InlineData(ThreatModelTagEntityType.Malware, "malware")]
-	[InlineData(ThreatModelTagEntityType.Signature, "signature")]
-	[InlineData(ThreatModelTagEntityType.TipReport, "tipreport")]
-	[InlineData(ThreatModelTagEntityType.Ttp, "ttp")]
-	[InlineData(ThreatModelTagEntityType.Vulnerability, "vulnerability")]
-	public async Task BulkTagAsync_SpellsEveryEntityType(ThreatModelTagEntityType type, string wire)
+	[InlineData(ThreatModelType.Actor, "actor")]
+	[InlineData(ThreatModelType.AttackPattern, "attackpattern")]
+	[InlineData(ThreatModelType.Campaign, "campaign")]
+	[InlineData(ThreatModelType.Incident, "incident")]
+	[InlineData(ThreatModelType.Malware, "malware")]
+	[InlineData(ThreatModelType.Signature, "signature")]
+	[InlineData(ThreatModelType.ThreatBulletin, "tipreport")]
+	[InlineData(ThreatModelType.Ttp, "ttp")]
+	[InlineData(ThreatModelType.Vulnerability, "vulnerability")]
+	public async Task BulkTagAsync_SpellsEveryEntityType(ThreatModelType type, string wire)
 	{
 		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(type, AddOnly, ct), "{}");
 
@@ -52,12 +53,12 @@ public class ThreatModelTagsTests
 
 	[Fact]
 	public Task BulkTagAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelTagEntityType.Actor, Example, ct), "POST", "api/v1/actor/bulk_tagging/");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelType.Actor, Example, ct), "POST", "api/v1/actor/bulk_tagging/");
 
 	[Fact]
 	public Task BulkTagAsync_Error_RaisesThreatStreamApiException()
 		=> TestClient.ShouldFailAsync(
-			(client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelTagEntityType.Actor, Example, ct),
+			(client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelType.Actor, Example, ct),
 			HttpStatusCode.BadRequest,
 			"""{"message": "Too many tags to remove"}""",
 			"Too many tags to remove");

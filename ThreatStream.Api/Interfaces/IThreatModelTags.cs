@@ -1,5 +1,6 @@
 using Refit;
 using ThreatStream.Api.Models.ThreatModelTags;
+using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
 
@@ -7,7 +8,7 @@ namespace ThreatStream.Api.Interfaces;
 public interface IThreatModelTags
 {
 	/// <summary>Adds and removes tags on threat model entities of one type (<c>POST api/v1/{t}/bulk_tagging/</c>).</summary>
-	/// <param name="entityType">The type of the entities, such as <see cref="ThreatModelTagEntityType.Actor"/>.</param>
+	/// <param name="entityType">The type of the entities, such as <see cref="ThreatModelType.Actor"/>.</param>
 	/// <param name="request">The entities and the tags to add and remove.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>A task that completes when ThreatStream has applied the tags.</returns>
@@ -18,5 +19,5 @@ public interface IThreatModelTags
 	/// body.
 	/// </remarks>
 	[Post("api/v1/{entityType}/bulk_tagging/")]
-	Task BulkTagAsync(ThreatModelTagEntityType entityType, [Body] ThreatModelTagRequest request, CancellationToken cancellationToken);
+	Task BulkTagAsync(ThreatModelType entityType, [Body] ThreatModelTagRequest request, CancellationToken cancellationToken);
 }

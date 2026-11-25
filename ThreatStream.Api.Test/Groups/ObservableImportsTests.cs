@@ -37,7 +37,7 @@ public class ObservableImportsTests
 			Campaigns = [78],
 			Incidents = [79],
 			Malware = [80],
-			TipReports = [81],
+			ThreatBulletins = [81],
 			Ttps = [82],
 			SourceLocations = ["europe"],
 			TargetLocations = ["NL", "GB"],

@@ -53,7 +53,7 @@ public enum AssociationEntityType
 
 	/// <summary>A threat bulletin (<c>tipreport</c>).</summary>
 	[JsonStringEnumMemberName("tipreport")]
-	TipReport = 11,
+	ThreatBulletin = 11,
 
 	/// <summary>A tool (<c>tool</c>).</summary>
 	[JsonStringEnumMemberName("tool")]

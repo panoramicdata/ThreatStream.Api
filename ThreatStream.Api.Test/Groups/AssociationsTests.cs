@@ -15,7 +15,7 @@ public class AssociationsTests
 	{
 		// The reference's example: associate threat bulletin 744 with observables 54 and 67.
 		var call = await TestClient.CaptureAsync(
-			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.TipReport, 744, AssociationEntityType.Intelligence, Observables, ct),
+			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.ThreatBulletin, 744, AssociationEntityType.Intelligence, Observables, ct),
 			"{}");
 
 		call.ShouldBe(HttpMethod.Post, "/api/v1/tipreport/744/intelligence/bulk_add/", body: """{"ids":[54,67]}""");
@@ -43,7 +43,7 @@ public class AssociationsTests
 	[InlineData(AssociationEntityType.Incident, "incident")]
 	[InlineData(AssociationEntityType.Malware, "malware")]
 	[InlineData(AssociationEntityType.Signature, "signature")]
-	[InlineData(AssociationEntityType.TipReport, "tipreport")]
+	[InlineData(AssociationEntityType.ThreatBulletin, "tipreport")]
 	[InlineData(AssociationEntityType.Tool, "tool")]
 	[InlineData(AssociationEntityType.Ttp, "ttp")]
 	[InlineData(AssociationEntityType.Vulnerability, "vulnerability")]
@@ -59,7 +59,7 @@ public class AssociationsTests
 	[Fact]
 	public Task BulkAddAsync_ReadOnlyClient_Refuses()
 		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync(
-			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.TipReport, 744, AssociationEntityType.Intelligence, Observables, ct),
+			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.ThreatBulletin, 744, AssociationEntityType.Intelligence, Observables, ct),
 			"POST",
 			"api/v1/tipreport/744/intelligence/bulk_add/");
 
@@ -73,7 +73,7 @@ public class AssociationsTests
 	[Fact]
 	public Task BulkAddAsync_Error_RaisesThreatStreamApiException()
 		=> TestClient.ShouldFailAsync(
-			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.TipReport, 744, AssociationEntityType.Intelligence, Observables, ct),
+			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.ThreatBulletin, 744, AssociationEntityType.Intelligence, Observables, ct),
 			HttpStatusCode.NotFound,
 			"""{"detail": "Not found."}""",
 			"Not found.");
