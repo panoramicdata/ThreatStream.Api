@@ -16,61 +16,62 @@ public partial class ObservablesTests
 		call.ShouldBe(HttpMethod.Get, "/api/v2/intelligence/");
 	}
 
+	private static readonly DateTimeOffset Since = new(2014, 10, 2, 20, 44, 35, TimeSpan.Zero);
+
+	private static readonly ObservableListOptions EveryFilter = new()
+	{
+		Query = "confidence>=90",
+		SearchFilter = 398,
+		Value = "192.0.2.4",
+		ValueContains = "example",
+		ValueStartsWith = "http",
+		Type = "ip",
+		Itype = "mal_ip,c2_ip",
+		ThreatType = "malware",
+		Status = "active",
+		Subtype = "SHA256",
+		Tlp = Tlp.Red,
+		IsPublic = true,
+		TagName = "energetic-bear",
+		Severity = "low",
+		Maltype = "zeus",
+		Detail = "d",
+		Detail2 = "d2",
+		FeedId = 0,
+		ImportSessionId = 482,
+		TrustedCircleIds = [1, 2],
+		TargetIndustry = "financial-services",
+		TargetLocations = "europe",
+		SourceLocations = "US-FL",
+		Uuid = "u",
+		FullCount = 1,
+		LocalOnly = true,
+		RemoteApi = true,
+		MinConfidence = 80,
+		MaxConfidence = 99,
+		MinSourceReportedConfidence = 50,
+		MinRetinaConfidence = 40,
+		CreatedSince = Since,
+		CreatedBefore = Since,
+		ModifiedSince = Since,
+		ModifiedBefore = Since,
+		UpdateIdAfter = 11849,
+		SourceCreatedSince = Since,
+		SourceModifiedSince = Since,
+		Country = "CN",
+		Asn = "3786",
+		Ip = "192.0.2.4",
+		Org = "o",
+		Rdns = "r",
+		Limit = 0,
+		Offset = 20,
+		OrderBy = "update_id"
+	};
+
 	[Fact]
 	public async Task ListAsync_SendsEveryFilter()
 	{
-		var since = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero);
-		var options = new ObservableListOptions
-		{
-			Query = "confidence>=90",
-			SearchFilter = 398,
-			Value = "192.0.2.4",
-			ValueContains = "example",
-			ValueStartsWith = "http",
-			Type = "ip",
-			Itype = "mal_ip,c2_ip",
-			ThreatType = "malware",
-			Status = "active",
-			Subtype = "SHA256",
-			Tlp = Tlp.Red,
-			IsPublic = true,
-			TagName = "energetic-bear",
-			Severity = "low",
-			Maltype = "zeus",
-			Detail = "d",
-			Detail2 = "d2",
-			FeedId = 0,
-			ImportSessionId = 482,
-			TrustedCircleIds = [1, 2],
-			TargetIndustry = "financial-services",
-			TargetLocations = "europe",
-			SourceLocations = "US-FL",
-			Uuid = "u",
-			FullCount = 1,
-			LocalOnly = true,
-			RemoteApi = true,
-			MinConfidence = 80,
-			MaxConfidence = 99,
-			MinSourceReportedConfidence = 50,
-			MinRetinaConfidence = 40,
-			CreatedSince = since,
-			CreatedBefore = since,
-			ModifiedSince = since,
-			ModifiedBefore = since,
-			UpdateIdAfter = 11849,
-			SourceCreatedSince = since,
-			SourceModifiedSince = since,
-			Country = "CN",
-			Asn = "3786",
-			Ip = "192.0.2.4",
-			Org = "o",
-			Rdns = "r",
-			Limit = 0,
-			Offset = 20,
-			OrderBy = "update_id"
-		};
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.Observables.ListAsync(options, ct), EmptyPage);
+		var call = await TestClient.CaptureAsync((client, ct) => client.Observables.ListAsync(EveryFilter, ct), EmptyPage);
 
 		call.ShouldBe(HttpMethod.Get, "/api/v2/intelligence/", AllFiltersQuery);
 	}

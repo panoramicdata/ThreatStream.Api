@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using ThreatStream.Api.Models;
 using ThreatStream.Api.Test.Support;
@@ -8,8 +9,30 @@ public class PagingTests
 {
 	private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
+	private const string MetaBeforeNext = "{\"meta\":{\"limit\":2,\"offset\":0,\"next\":";
+
+	private const string MetaAfterNext = ",\"previous\":null,\"total_count\":5,\"took\":12,\"approximate_count\":false},\"objects\":[";
+
 	private static string Page(string? next, params int[] ids)
-		=> $$"""{"meta":{"limit":2,"offset":0,"next":{{(next is null ? "null" : $"\"{next}\"")}},"previous":null,"total_count":5,"took":12,"approximate_count":false},"objects":[{{string.Join(',', ids.Select(i => $$"""{"id":{{i}},"name":"o{{i}}","update_id":{{i * 10}},"resource_uri":"/api/v1/probe/{{i}}/"}"""))}}]}""";
+		=> MetaBeforeNext + (next is null ? "null" : "\"" + next + "\"") + MetaAfterNext + string.Join(',', ids.Select(Item)) + "]}";
+
+	private static string Item(int id)
+	{
+		var text = id.ToString(CultureInfo.InvariantCulture);
+		var updateId = (id * 10).ToString(CultureInfo.InvariantCulture);
+		return "{\"id\":" + text + ",\"name\":\"o" + text + "\",\"update_id\":" + updateId + ",\"resource_uri\":\"/api/v1/probe/" + text + "/\"}";
+	}
+
+	private static async Task<int> CountAsync<T>(IAsyncEnumerable<T> items)
+	{
+		var count = 0;
+		await foreach (var _ in items)
+		{
+			count++;
+		}
+
+		return count;
+	}
 
 	private static async Task<List<long>> EnumerateAsync(ThreatStreamClient client, string first = "api/v1/probe/")
 	{
@@ -158,12 +181,7 @@ public class PagingTests
 	{
 		using var client = TestClient.Create(new StubHandler());
 
-		var act = async () =>
-		{
-			await foreach (var _ in client.EnumerateAsync<ProbeObject>(null!, Ct))
-			{
-			}
-		};
+		var act = () => CountAsync(client.EnumerateAsync<ProbeObject>(null!, Ct));
 
 		await act.Should().ThrowAsync<ArgumentNullException>();
 	}
@@ -215,12 +233,8 @@ public class PagingTests
 	[Fact]
 	public async Task EnumerateByUpdateIdAsync_RequiresItsDelegates()
 	{
-		var none = async (Func<long, CancellationToken, Task<ThreatStreamPage<ProbeObject>>>? getPage, Func<ProbeObject, long>? updateIdOf) =>
-		{
-			await foreach (var _ in ThreatStreamClient.EnumerateByUpdateIdAsync(getPage!, updateIdOf!, 0, Ct))
-			{
-			}
-		};
+		var none = (Func<long, CancellationToken, Task<ThreatStreamPage<ProbeObject>>>? getPage, Func<ProbeObject, long>? updateIdOf)
+			=> CountAsync(ThreatStreamClient.EnumerateByUpdateIdAsync(getPage!, updateIdOf!, 0, Ct));
 
 		await none.Invoking(f => f(null, o => o.UpdateId)).Should().ThrowAsync<ArgumentNullException>();
 		await none.Invoking(f => f((_, _) => Task.FromResult(UpdatePage()), null)).Should().ThrowAsync<ArgumentNullException>();

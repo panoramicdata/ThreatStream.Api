@@ -51,12 +51,12 @@ internal static class UserAuditTestKit
 	};
 
 	/// <summary>A stub answering the requests in turn with these bodies, each with status 200.</summary>
-	public static StubHandler Responses(params string[] responses)
+	public static StubHandler Responses(params string[] bodies)
 	{
 		var stub = new StubHandler();
-		foreach (var response in responses)
+		foreach (var body in bodies)
 		{
-			stub.Enqueue(HttpStatusCode.OK, response);
+			stub.Enqueue(HttpStatusCode.OK, body);
 		}
 
 		return stub;

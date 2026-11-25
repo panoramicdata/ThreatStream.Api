@@ -10,47 +10,47 @@ public class ObservableImportsTests
 {
 	private static readonly DateTimeOffset Expiry = new(2017, 1, 26, 0, 0, 0, TimeSpan.Zero);
 
+	private static readonly ObservableImportRequest EveryField = new()
+	{
+		File = new ThreatStreamFile("iocs.csv", "value,itype,tags\n192.0.2.4,brute_ip,phishing\n"u8.ToArray(), "text/csv"),
+		DataText = "192.0.2.4",
+		Url = "https://feed.example/list.txt",
+		DataType = "structured",
+		ThreatType = "malware",
+		Classification = "private",
+		Confidence = 70,
+		SourceConfidenceWeight = 100,
+		DefaultState = "active",
+		ExpirationTs = Expiry,
+		Severity = "high",
+		Tags = [new ThreatStreamTag { Name = "private_tag", Tlp = Tlp.Red }],
+		Tlp = Tlp.Green,
+		TrustedCircles = [1, 2],
+		RejectBenign = false,
+		IsAnonymous = true,
+		IntelligenceSource = "unit test",
+		RemoteApi = true,
+		Actors = [77],
+		Campaigns = [78],
+		Incidents = [79],
+		Malware = [80],
+		ThreatBulletins = [81],
+		Ttps = [82],
+		SourceLocations = ["europe"],
+		TargetLocations = ["NL", "GB"],
+		TargetIndustry = ["financial-services"],
+		DomainMapping = "mal_domain",
+		EmailMapping = "mal_email",
+		IpMapping = "mal_ip",
+		Md5Mapping = "mal_md5",
+		UrlMapping = "mal_url",
+		AdditionalFields = { ["notes"] = "from a test" }
+	};
+
 	[Fact]
 	public async Task ImportAsync_SendsMultipartWithEveryField()
 	{
-		var request = new ObservableImportRequest
-		{
-			File = new ThreatStreamFile("iocs.csv", "value,itype,tags\n192.0.2.4,brute_ip,phishing\n"u8.ToArray(), "text/csv"),
-			DataText = "192.0.2.4",
-			Url = "https://feed.example/list.txt",
-			DataType = "structured",
-			ThreatType = "malware",
-			Classification = "private",
-			Confidence = 70,
-			SourceConfidenceWeight = 100,
-			DefaultState = "active",
-			ExpirationTs = Expiry,
-			Severity = "high",
-			Tags = [new ThreatStreamTag { Name = "private_tag", Tlp = Tlp.Red }],
-			Tlp = Tlp.Green,
-			TrustedCircles = [1, 2],
-			RejectBenign = false,
-			IsAnonymous = true,
-			IntelligenceSource = "unit test",
-			RemoteApi = true,
-			Actors = [77],
-			Campaigns = [78],
-			Incidents = [79],
-			Malware = [80],
-			ThreatBulletins = [81],
-			Ttps = [82],
-			SourceLocations = ["europe"],
-			TargetLocations = ["NL", "GB"],
-			TargetIndustry = ["financial-services"],
-			DomainMapping = "mal_domain",
-			EmailMapping = "mal_email",
-			IpMapping = "mal_ip",
-			Md5Mapping = "mal_md5",
-			UrlMapping = "mal_url",
-			AdditionalFields = { ["notes"] = "from a test" }
-		};
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.ObservableImports.ImportAsync(request, ct), ImportJobJson);
+		var call = await TestClient.CaptureAsync((client, ct) => client.ObservableImports.ImportAsync(EveryField, ct), ImportJobJson);
 
 		call.ShouldBe(HttpMethod.Post, "/api/v2/intelligence/import/");
 		PartsOf(call).Should().Equal(
