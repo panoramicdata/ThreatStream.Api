@@ -1,6 +1,5 @@
 using System.Net;
 using ThreatStream.Api.Models;
-using ThreatStream.Api.Models.ThreatModelTags;
 using ThreatStream.Api.Models.ThreatModels;
 using ThreatStream.Api.Test.Support;
 
@@ -9,7 +8,7 @@ namespace ThreatStream.Api.Test.Groups;
 public class ThreatModelTagsTests
 {
 	// The ThreatStream API reference's (Threat Model Entity Tags in Bulk) example: tag three actors and remove tag4.
-	private static readonly ThreatModelTagRequest Example = new()
+	private static readonly BulkTagRequest Example = new()
 	{
 		Ids = [655, 2784, 2785],
 		Tags =
@@ -21,7 +20,7 @@ public class ThreatModelTagsTests
 		RemoveTags = [new ThreatStreamTag { Name = "tag4" }]
 	};
 
-	private static readonly ThreatModelTagRequest AddOnly = new() { Ids = [1], Tags = [new ThreatStreamTag { Name = "t" }] };
+	private static readonly BulkTagRequest AddOnly = new() { Ids = [1], Tags = [new ThreatStreamTag { Name = "t" }] };
 
 	[Fact]
 	public async Task BulkTagAsync_PostsTheIdsAndTags()

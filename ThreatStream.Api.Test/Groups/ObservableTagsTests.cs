@@ -21,7 +21,7 @@ public class ObservableTagsTests
 		""";
 
 	// The reference's add example: a private tag on five observables.
-	private static readonly ObservableTagRequest AddExample = new() { Ids = [61, 52, 8, 50, 34], Tags = [new ThreatStreamTag { Name = "test", Tlp = Tlp.Red }] };
+	private static readonly BulkTagRequest AddExample = new() { Ids = [61, 52, 8, 50, 34], Tags = [new ThreatStreamTag { Name = "test", Tlp = Tlp.Red }] };
 
 	// The reference's asynchronous example: add my_tag and remove my_tag2 on the active observables created since a date.
 	private static readonly ObservableTagQueryRequest QueryExample = new()
@@ -42,7 +42,7 @@ public class ObservableTagsTests
 	[Fact]
 	public async Task BulkTagAsync_SendsTagsToRemove()
 	{
-		var request = new ObservableTagRequest { Ids = [776, 349], RemoveTags = [new ThreatStreamTag { Name = "test" }, new ThreatStreamTag { Name = "tagB" }] };
+		var request = new BulkTagRequest { Ids = [776, 349], RemoveTags = [new ThreatStreamTag { Name = "test" }, new ThreatStreamTag { Name = "tagB" }] };
 
 		var call = await TestClient.CaptureAsync((client, ct) => client.ObservableTags.BulkTagAsync(request, ct), "{}");
 

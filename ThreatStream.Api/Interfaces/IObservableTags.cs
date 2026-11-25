@@ -26,7 +26,7 @@ public interface IObservableTags
 	/// </para>
 	/// </remarks>
 	[Post("api/v2/intelligence/bulk_tagging/")]
-	Task BulkTagAsync([Body] ObservableTagRequest request, CancellationToken cancellationToken);
+	Task BulkTagAsync([Body] BulkTagRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Starts an asynchronous job that adds and removes tags on up to 10,000 observables selected by a query

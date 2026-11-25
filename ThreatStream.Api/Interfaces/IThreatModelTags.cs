@@ -1,5 +1,5 @@
 using Refit;
-using ThreatStream.Api.Models.ThreatModelTags;
+using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
@@ -19,5 +19,5 @@ public interface IThreatModelTags
 	/// body.
 	/// </remarks>
 	[Post("api/v1/{entityType}/bulk_tagging/")]
-	Task BulkTagAsync(ThreatModelType entityType, [Body] ThreatModelTagRequest request, CancellationToken cancellationToken);
+	Task BulkTagAsync(ThreatModelType entityType, [Body] BulkTagRequest request, CancellationToken cancellationToken);
 }
