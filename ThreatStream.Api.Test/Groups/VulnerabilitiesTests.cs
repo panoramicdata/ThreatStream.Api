@@ -2,6 +2,7 @@ using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ThreatModels;
 using ThreatStream.Api.Test.Support;
 using static ThreatStream.Api.Test.Support.ThreatModelsBTestKit;
+using static ThreatStream.Api.Test.Support.ThreatModelsTestKit;
 
 namespace ThreatStream.Api.Test.Groups;
 
@@ -10,14 +11,10 @@ public class VulnerabilitiesTests
 	private const string Type = "vulnerability";
 
 	// The reference documents the attributes but gives no example response; this follows its attribute table.
-	private static readonly string VulnerabilityJson = $$"""
-		{
-			{{EntityFields(15, Type)}},
-			"is_system": true,
-			"source": "NVD",
-			"remote_api": false
-		}
-		""";
+	private static readonly string VulnerabilityJson = Entity(15, Type, """
+		"is_system": true,
+		"source": "NVD"
+		""");
 
 	[Fact]
 	public Task ListAsync_SendsGetWithFilters()
@@ -37,7 +34,7 @@ public class VulnerabilitiesTests
 
 		var call = await TestClient.CaptureAsync((client, ct) => client.Vulnerabilities.CreateAsync(request, ct), VulnerabilityJson);
 
-		call.ShouldBe(HttpMethod.Post, "/api/v1/vulnerability/", body: """{"name":"dummy test vulnerability","publication_status":"published","definition":"the definition of this vulnerability","tags":["big vulnerability","dummy tag"],"tlp":"red"}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/vulnerability/", body: """{"name":"dummy test vulnerability","definition":"the definition of this vulnerability","tags":["big vulnerability","dummy tag"],"tlp":"red","publication_status":"published"}""");
 	}
 
 	[Fact]
@@ -52,30 +49,29 @@ public class VulnerabilitiesTests
 		vulnerability.ShouldHaveEntityFields(15, Type);
 		vulnerability.IsSystem.Should().BeTrue();
 		vulnerability.Source.Should().Be("NVD");
-		vulnerability.RemoteApi.Should().BeFalse();
 	}
 
 	[Fact]
 	public async Task UpdateAsync_SendsTheDocumentedExample()
 	{
-		var request = new VulnerabilityUpdateRequest { Name = "another dummy test vulnerability", Description = "d", Tags = ["December"] };
+		var request = new VulnerabilityUpdateRequest { Name = "another dummy test vulnerability", Tags = ["December"] };
 
 		var call = await TestClient.CaptureAsync((client, ct) => client.Vulnerabilities.UpdateAsync(15, request, ct), VulnerabilityJson);
 
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/vulnerability/15/", body: """{"name":"another dummy test vulnerability","description":"d","tags":["December"]}""");
+		call.ShouldBe(HttpMethod.Patch, "/api/v1/vulnerability/15/", body: """{"name":"another dummy test vulnerability","tags":["December"]}""");
 	}
 
 	[Fact]
-	public Task ListAssociatedWithIntelligenceAsync_SendsTheValue()
-		=> AssociatedByValueShouldSendAsync((client, value, options, ct) => client.Vulnerabilities.ListAssociatedWithIntelligenceAsync(value, options, ct), Type);
+	public Task ListAssociatedWithValueAsync_SendsTheValue()
+		=> AssociatedWithValueShouldSendAsync((client, value, options, ct) => client.Vulnerabilities.ListAssociatedWithValueAsync(value, options, ct), Type);
 
 	[Fact]
-	public Task ListAssociatedWithIntelligenceByIdsAsync_SendsTheIds()
-		=> AssociatedByIdsShouldSendAsync((client, ids, options, ct) => client.Vulnerabilities.ListAssociatedWithIntelligenceByIdsAsync(ids, options, ct), Type);
+	public Task ListAssociatedWithIdsAsync_SendsTheIds()
+		=> AssociatedWithIdsShouldSendAsync((client, ids, options, ct) => client.Vulnerabilities.ListAssociatedWithIdsAsync(ids, options, ct), Type);
 
 	[Fact]
-	public Task ListLinkedEntitiesAsync_SendsTheEntityType()
-		=> LinkedEntitiesShouldSendAsync((client, id, entityType, options, ct) => client.Vulnerabilities.ListLinkedEntitiesAsync(id, entityType, options, ct), Type);
+	public Task ListLinkedAsync_SendsTheEntityType()
+		=> LinkedShouldSendAsync((client, id, entityType, options, ct) => client.Vulnerabilities.ListLinkedAsync(id, entityType, options, ct), Type);
 
 	[Fact]
 	public Task ListIntelligenceAsync_SendsGet()
@@ -84,13 +80,13 @@ public class VulnerabilitiesTests
 	[Fact]
 	public async Task Writes_AreRefusedWhenReadOnly()
 	{
-		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Vulnerabilities.CreateAsync(new VulnerabilityCreateRequest { Name = "x" }, ct));
-		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Vulnerabilities.UpdateAsync(15, new VulnerabilityUpdateRequest { Name = "x" }, ct));
+		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Vulnerabilities.CreateAsync(new VulnerabilityCreateRequest { Name = "x" }, ct), "POST", "api/v1/vulnerability/");
+		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Vulnerabilities.UpdateAsync(15, new VulnerabilityUpdateRequest { Name = "x" }, ct), "PATCH", "api/v1/vulnerability/15/");
 	}
 
 	[Fact]
 	public Task GetAsync_NotFound_RaisesThreatStreamApiException()
-		=> NotFoundShouldFailAsync((client, ct) => client.Vulnerabilities.GetAsync(15, null, ct));
+		=> ShouldFailWhenNotFoundAsync((client, ct) => client.Vulnerabilities.GetAsync(15, null, ct));
 
 	[Fact]
 	public void Property_ReturnsTheSameInstance()

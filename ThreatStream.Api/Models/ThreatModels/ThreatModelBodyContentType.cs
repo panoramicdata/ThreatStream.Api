@@ -2,17 +2,20 @@ using System.Text.Json.Serialization;
 
 namespace ThreatStream.Api.Models.ThreatModels;
 
-/// <summary>The format of a threat model entity's body or description text (<c>body_content_type</c>); it cannot be changed once set.</summary>
+/// <summary>
+/// The format of a threat model entity's body text (<c>body_content_type</c>). ThreatStream's default is
+/// <see cref="Markdown"/>; once set, it cannot be changed.
+/// </summary>
 public enum ThreatModelBodyContentType
 {
 	/// <summary>A format this library does not know.</summary>
 	Unknown = 0,
 
-	/// <summary>Markdown, ThreatStream's default (<c>markdown</c>).</summary>
+	/// <summary>Markdown (<c>markdown</c>).</summary>
 	[JsonStringEnumMemberName("markdown")]
 	Markdown = 1,
 
-	/// <summary>Rich text (<c>richtext</c>).</summary>
+	/// <summary>Rich text, as HTML (<c>richtext</c>).</summary>
 	[JsonStringEnumMemberName("richtext")]
 	RichText = 2
 }

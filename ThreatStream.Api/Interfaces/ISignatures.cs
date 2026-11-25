@@ -1,6 +1,5 @@
 using Refit;
 using ThreatStream.Api.Models;
-using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
@@ -52,7 +51,7 @@ public interface ISignatures
 	/// <returns>One page of signatures.</returns>
 	/// <remarks>150 requests per minute per user.</remarks>
 	[Get("api/v1/signature/associated_with_intelligence/")]
-	Task<ThreatStreamPage<Signature>> ListAssociatedWithIntelligenceAsync([AliasAs("value")] string value, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Signature>> ListAssociatedWithValueAsync([AliasAs("value")] string value, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the signatures associated with any of the given observables (<c>GET api/v1/signature/associated_with_intelligence/?ids=</c>).</summary>
 	/// <param name="ids">The observables' IDs, sent comma-separated.</param>
@@ -61,7 +60,7 @@ public interface ISignatures
 	/// <returns>One page of signatures.</returns>
 	/// <remarks>150 requests per minute per user.</remarks>
 	[Get("api/v1/signature/associated_with_intelligence/")]
-	Task<ThreatStreamPage<Signature>> ListAssociatedWithIntelligenceByIdsAsync([AliasAs("ids")] IReadOnlyList<long> ids, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Signature>> ListAssociatedWithIdsAsync([AliasAs("ids")] IReadOnlyList<long> ids, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Lists the entities of one type linked to a signature (<c>GET api/v1/signature/{id}/{entity_type}/</c>), such as its
@@ -73,7 +72,7 @@ public interface ISignatures
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>One page of linked entities.</returns>
 	[Get("api/v1/signature/{id}/{entityType}/")]
-	Task<ThreatStreamPage<ThreatModelLinkedEntity>> ListLinkedEntitiesAsync(long id, ThreatModelEntityType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatModelAssociatedEntity>> ListLinkedAsync(long id, ThreatModelType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the observables associated with a signature (<c>GET api/v1/signature/{id}/intelligence/</c>).</summary>
 	/// <param name="id">The signature's ID.</param>
@@ -81,7 +80,7 @@ public interface ISignatures
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>One page of observables.</returns>
 	[Get("api/v1/signature/{id}/intelligence/")]
-	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatModelObservable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the signature types and the IDs a new signature names its type by (<c>GET api/v1/signature_type/</c>).</summary>
 	/// <param name="options">Paging and order, or <see langword="null"/>.</param>
@@ -92,5 +91,5 @@ public interface ISignatures
 	/// shape are inferred and unit-verified only.
 	/// </remarks>
 	[Get("api/v1/signature_type/")]
-	Task<ThreatStreamPage<SignatureType>> ListTypesAsync([Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatModelReference>> ListTypesAsync([Query] ListOptions? options, CancellationToken cancellationToken);
 }

@@ -1,6 +1,5 @@
 using Refit;
 using ThreatStream.Api.Models;
-using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
@@ -51,7 +50,7 @@ public interface ITtps
 	/// <returns>One page of TTPs.</returns>
 	/// <remarks>150 requests per minute per user.</remarks>
 	[Get("api/v1/ttp/associated_with_intelligence/")]
-	Task<ThreatStreamPage<Ttp>> ListAssociatedWithIntelligenceAsync([AliasAs("value")] string value, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Ttp>> ListAssociatedWithValueAsync([AliasAs("value")] string value, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the TTPs associated with any of the given observables (<c>GET api/v1/ttp/associated_with_intelligence/?ids=</c>).</summary>
 	/// <param name="ids">The observables' IDs, sent comma-separated.</param>
@@ -60,7 +59,7 @@ public interface ITtps
 	/// <returns>One page of TTPs.</returns>
 	/// <remarks>150 requests per minute per user.</remarks>
 	[Get("api/v1/ttp/associated_with_intelligence/")]
-	Task<ThreatStreamPage<Ttp>> ListAssociatedWithIntelligenceByIdsAsync([AliasAs("ids")] IReadOnlyList<long> ids, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Ttp>> ListAssociatedWithIdsAsync([AliasAs("ids")] IReadOnlyList<long> ids, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Lists the entities of one type linked to a TTP (<c>GET api/v1/ttp/{id}/{entity_type}/</c>), such as its actors
@@ -72,7 +71,7 @@ public interface ITtps
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>One page of linked entities.</returns>
 	[Get("api/v1/ttp/{id}/{entityType}/")]
-	Task<ThreatStreamPage<ThreatModelLinkedEntity>> ListLinkedEntitiesAsync(long id, ThreatModelEntityType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatModelAssociatedEntity>> ListLinkedAsync(long id, ThreatModelType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the observables associated with a TTP (<c>GET api/v1/ttp/{id}/intelligence/</c>).</summary>
 	/// <param name="id">The TTP's ID.</param>
@@ -80,5 +79,5 @@ public interface ITtps
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>One page of observables.</returns>
 	[Get("api/v1/ttp/{id}/intelligence/")]
-	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatModelObservable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 }

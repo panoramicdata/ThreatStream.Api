@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ThreatStream.Api.Models.ThreatModels;
@@ -8,7 +7,8 @@ namespace ThreatStream.Api.Models.ThreatModels;
 /// The deprecated attributes <c>comments</c>, <c>history</c>, <c>threat_actor</c>, <c>ttp</c> and <c>vulnerability</c>
 /// (the last three always <see langword="null"/>) are not modelled; if sent, they are in
 /// <see cref="ThreatStreamObject.AdditionalProperties"/>. A threat bulletin's stage is <see cref="Status"/>, not
-/// <see cref="ThreatModelEntity.PublicationStatus"/>.
+/// <see cref="ThreatModelEntity.PublicationStatus"/>, and its tags with their own TLP are in
+/// <see cref="ThreatModelEntity.TagsV2"/>.
 /// </remarks>
 public sealed partial class ThreatBulletin : ThreatModelEntity
 {
@@ -36,30 +36,7 @@ public sealed partial class ThreatBulletin : ThreatModelEntity
 	[JsonPropertyName("owner_org_id")]
 	public long? OwnerOrgId { get; init; }
 
-	/// <summary>The ID of the owning user (<c>owner_user_id</c>).</summary>
-	[JsonPropertyName("owner_user_id")]
-	public long? OwnerUserId { get; init; }
-
-	/// <summary>Whether the owning user and organisation are anonymised (<c>is_anonymous</c>, sent as <c>1</c> or <c>0</c>).</summary>
-	[JsonPropertyName("is_anonymous")]
-	public bool? IsAnonymous { get; init; }
-
 	/// <summary>The source of the intelligence, such as <c>USCERT</c> (<c>source</c>).</summary>
 	[JsonPropertyName("source")]
 	public string? Source { get; init; }
-
-	/// <summary>The bulletin's tags, each with its own TLP (<c>tags_v2</c>).</summary>
-	[JsonPropertyName("tags_v2")]
-	public IReadOnlyList<ThreatStreamTag> TagsV2 { get; init; } = [];
-
-	/// <summary>On ThreatStream OnPrem, whether the entity is remote, held in the cloud (<c>remote_api</c>).</summary>
-	[JsonPropertyName("remote_api")]
-	public bool? RemoteApi { get; init; }
-
-	/// <summary>
-	/// The files (white papers, reports, news) attached to the bulletin (<c>attachments</c>), each an ID or an object;
-	/// visible to every organisation that can see the bulletin.
-	/// </summary>
-	[JsonPropertyName("attachments")]
-	public IReadOnlyList<JsonElement> Attachments { get; init; } = [];
 }

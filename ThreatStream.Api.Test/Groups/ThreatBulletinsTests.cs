@@ -2,6 +2,7 @@ using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ThreatModels;
 using ThreatStream.Api.Test.Support;
 using static ThreatStream.Api.Test.Support.ThreatModelsBTestKit;
+using static ThreatStream.Api.Test.Support.ThreatModelsTestKit;
 
 namespace ThreatStream.Api.Test.Groups;
 
@@ -11,31 +12,23 @@ public partial class ThreatBulletinsTests
 
 	// The reference documents the attributes but gives no example response; this follows its attribute table, with the
 	// deprecated attributes as it says ThreatStream sends them.
-	private static readonly string ThreatBulletinJson = $$"""
-		{
-			{{EntityFields(11, Type)}},
-			"body": "this is a new threat bulletin",
-			"body_content_type": "richtext",
-			"status": "review_requested",
-			"assignee_org_id": "42",
-			"assignee_user_id": 7,
-			"owner_org_id": 42,
-			"owner_user_id": 8,
-			"is_anonymous": "1",
-			"source": "USCERT",
-			"tags_v2": [{"id": "abc", "name": "my_private_tag", "tlp": "red", "org_id": 42}],
-			"remote_api": false,
-			"attachments": [{"id": 5, "filename": "report.pdf"}],
-			"import_sessions": [301],
-			"intelligence": [165546],
-			"sandbox_reports": [77],
-			"comments": [],
-			"history": [],
-			"threat_actor": null,
-			"ttp": null,
-			"vulnerability": null
-		}
-		""";
+	private static readonly string ThreatBulletinJson = Entity(11, Type, """
+		"body": "this is a new threat bulletin",
+		"body_content_type": "richtext",
+		"status": "review_requested",
+		"assignee_org_id": "42",
+		"assignee_user_id": 7,
+		"owner_org_id": 42,
+		"source": "USCERT",
+		"attachments": [{"id": 5, "name": "report.pdf"}],
+		"import_sessions": [301],
+		"sandbox_reports": ["77"],
+		"comments": [],
+		"history": [],
+		"threat_actor": null,
+		"ttp": null,
+		"vulnerability": null
+		""");
 
 	[Fact]
 	public Task ListAsync_SendsGetWithFilters()
@@ -80,16 +73,16 @@ public partial class ThreatBulletinsTests
 	}
 
 	[Fact]
-	public Task ListAssociatedWithIntelligenceAsync_SendsTheValue()
-		=> AssociatedByValueShouldSendAsync((client, value, options, ct) => client.ThreatBulletins.ListAssociatedWithIntelligenceAsync(value, options, ct), Type);
+	public Task ListAssociatedWithValueAsync_SendsTheValue()
+		=> AssociatedWithValueShouldSendAsync((client, value, options, ct) => client.ThreatBulletins.ListAssociatedWithValueAsync(value, options, ct), Type);
 
 	[Fact]
-	public Task ListAssociatedWithIntelligenceByIdsAsync_SendsTheIds()
-		=> AssociatedByIdsShouldSendAsync((client, ids, options, ct) => client.ThreatBulletins.ListAssociatedWithIntelligenceByIdsAsync(ids, options, ct), Type);
+	public Task ListAssociatedWithIdsAsync_SendsTheIds()
+		=> AssociatedWithIdsShouldSendAsync((client, ids, options, ct) => client.ThreatBulletins.ListAssociatedWithIdsAsync(ids, options, ct), Type);
 
 	[Fact]
-	public Task ListLinkedEntitiesAsync_SendsTheEntityType()
-		=> LinkedEntitiesShouldSendAsync((client, id, entityType, options, ct) => client.ThreatBulletins.ListLinkedEntitiesAsync(id, entityType, options, ct), Type);
+	public Task ListLinkedAsync_SendsTheEntityType()
+		=> LinkedShouldSendAsync((client, id, entityType, options, ct) => client.ThreatBulletins.ListLinkedAsync(id, entityType, options, ct), Type);
 
 	[Fact]
 	public Task ListIntelligenceAsync_SendsGet()
@@ -97,7 +90,7 @@ public partial class ThreatBulletinsTests
 
 	[Fact]
 	public Task GetAsync_NotFound_RaisesThreatStreamApiException()
-		=> NotFoundShouldFailAsync((client, ct) => client.ThreatBulletins.GetAsync(11, null, ct));
+		=> ShouldFailWhenNotFoundAsync((client, ct) => client.ThreatBulletins.GetAsync(11, null, ct));
 
 	[Fact]
 	public void Property_ReturnsTheSameInstance()

@@ -2,6 +2,7 @@ using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ThreatModels;
 using ThreatStream.Api.Test.Support;
 using static ThreatStream.Api.Test.Support.ThreatModelsBTestKit;
+using static ThreatStream.Api.Test.Support.ThreatModelsTestKit;
 
 namespace ThreatStream.Api.Test.Groups;
 
@@ -10,15 +11,9 @@ public class TtpsTests
 	private const string Type = "ttp";
 
 	// The reference documents the attributes but gives no example response; this follows its attribute table.
-	private static readonly string TtpJson = $$"""
-		{
-			{{EntityFields(1774, Type)}},
-			"actors": [{"id": 1, "name": "Example Actor"}],
-			"intelligence": [165546],
-			"signatures": [10],
-			"remote_api": "true"
-		}
-		""";
+	private static readonly string TtpJson = Entity(1774, Type, """
+		"actors": [{"id": 1, "name": "Example Actor"}]
+		""");
 
 	[Fact]
 	public Task ListAsync_SendsGetWithFilters()
@@ -39,7 +34,7 @@ public class TtpsTests
 
 		var call = await TestClient.CaptureAsync((client, ct) => client.Ttps.CreateAsync(request, ct), TtpJson);
 
-		call.ShouldBe(HttpMethod.Post, "/api/v1/ttp/", body: """{"name":"dummy test ttp","publication_status":"published","signatures":[10],"tags":["big ttp","dummy tag"],"tlp":"red","intelligence":[165546]}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/ttp/", body: """{"name":"dummy test ttp","tags":["big ttp","dummy tag"],"tlp":"red","publication_status":"published","intelligence":[165546],"signatures":[10]}""");
 	}
 
 	[Fact]
@@ -52,10 +47,7 @@ public class TtpsTests
 		var ttp = await TestClient.ReadAsync((client, ct) => client.Ttps.GetAsync(1774, null, ct), TtpJson);
 
 		ttp.ShouldHaveEntityFields(1774, Type);
-		ttp.Actors.Should().ContainSingle().Which.GetProperty("name").GetString().Should().Be("Example Actor");
-		ttp.Intelligence.Should().ContainSingle().Which.GetInt64().Should().Be(165546);
-		ttp.Signatures.Should().ContainSingle().Which.GetInt64().Should().Be(10);
-		ttp.RemoteApi.Should().BeTrue();
+		ttp.Actors.Should().ContainSingle().Which.Name.Should().Be("Example Actor");
 	}
 
 	[Fact]
@@ -72,20 +64,20 @@ public class TtpsTests
 
 		var call = await TestClient.CaptureAsync((client, ct) => client.Ttps.UpdateAsync(1774, request, ct), TtpJson);
 
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/ttp/1774/", body: """{"name":"another dummy test ttp","description":"d","actors":[1],"tlp":"amber","is_public":true}""");
+		call.ShouldBe(HttpMethod.Patch, "/api/v1/ttp/1774/", body: """{"actors":[1],"name":"another dummy test ttp","description":"d","tlp":"amber","is_public":true}""");
 	}
 
 	[Fact]
-	public Task ListAssociatedWithIntelligenceAsync_SendsTheValue()
-		=> AssociatedByValueShouldSendAsync((client, value, options, ct) => client.Ttps.ListAssociatedWithIntelligenceAsync(value, options, ct), Type);
+	public Task ListAssociatedWithValueAsync_SendsTheValue()
+		=> AssociatedWithValueShouldSendAsync((client, value, options, ct) => client.Ttps.ListAssociatedWithValueAsync(value, options, ct), Type);
 
 	[Fact]
-	public Task ListAssociatedWithIntelligenceByIdsAsync_SendsTheIds()
-		=> AssociatedByIdsShouldSendAsync((client, ids, options, ct) => client.Ttps.ListAssociatedWithIntelligenceByIdsAsync(ids, options, ct), Type);
+	public Task ListAssociatedWithIdsAsync_SendsTheIds()
+		=> AssociatedWithIdsShouldSendAsync((client, ids, options, ct) => client.Ttps.ListAssociatedWithIdsAsync(ids, options, ct), Type);
 
 	[Fact]
-	public Task ListLinkedEntitiesAsync_SendsTheEntityType()
-		=> LinkedEntitiesShouldSendAsync((client, id, entityType, options, ct) => client.Ttps.ListLinkedEntitiesAsync(id, entityType, options, ct), Type);
+	public Task ListLinkedAsync_SendsTheEntityType()
+		=> LinkedShouldSendAsync((client, id, entityType, options, ct) => client.Ttps.ListLinkedAsync(id, entityType, options, ct), Type);
 
 	[Fact]
 	public Task ListIntelligenceAsync_SendsGet()
@@ -94,13 +86,13 @@ public class TtpsTests
 	[Fact]
 	public async Task Writes_AreRefusedWhenReadOnly()
 	{
-		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Ttps.CreateAsync(new TtpCreateRequest { Name = "x" }, ct));
-		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Ttps.UpdateAsync(1774, new TtpUpdateRequest { Name = "x" }, ct));
+		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Ttps.CreateAsync(new TtpCreateRequest { Name = "x" }, ct), "POST", "api/v1/ttp/");
+		await ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Ttps.UpdateAsync(1774, new TtpUpdateRequest { Name = "x" }, ct), "PATCH", "api/v1/ttp/1774/");
 	}
 
 	[Fact]
 	public Task GetAsync_NotFound_RaisesThreatStreamApiException()
-		=> NotFoundShouldFailAsync((client, ct) => client.Ttps.GetAsync(1774, null, ct));
+		=> ShouldFailWhenNotFoundAsync((client, ct) => client.Ttps.GetAsync(1774, null, ct));
 
 	[Fact]
 	public void Property_ReturnsTheSameInstance()

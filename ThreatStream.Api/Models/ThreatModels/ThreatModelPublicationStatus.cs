@@ -2,10 +2,13 @@ using System.Text.Json.Serialization;
 
 namespace ThreatStream.Api.Models.ThreatModels;
 
-/// <summary>The review stage of a threat model entity (<c>publication_status</c>, or <c>status</c> on a threat bulletin).</summary>
+/// <summary>
+/// The review state of a threat model entity (<c>publication_status</c>). An entity must be
+/// <see cref="Published"/> to be visible to users outside the organisation that owns it.
+/// </summary>
 public enum ThreatModelPublicationStatus
 {
-	/// <summary>A stage this library does not know.</summary>
+	/// <summary>A status this library does not know.</summary>
 	Unknown = 0,
 
 	/// <summary>Newly created (<c>new</c>).</summary>
@@ -20,11 +23,11 @@ public enum ThreatModelPublicationStatus
 	[JsonStringEnumMemberName("review_requested")]
 	ReviewRequested = 3,
 
-	/// <summary>Reviewed (<c>reviewed</c>).</summary>
+	/// <summary>Reviewed but not yet published (<c>reviewed</c>).</summary>
 	[JsonStringEnumMemberName("reviewed")]
 	Reviewed = 4,
 
-	/// <summary>Published, and so visible outside the organisation (<c>published</c>).</summary>
+	/// <summary>Published, and so visible outside the owning organisation (<c>published</c>).</summary>
 	[JsonStringEnumMemberName("published")]
 	Published = 5
 }
