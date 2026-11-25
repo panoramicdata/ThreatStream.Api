@@ -156,13 +156,25 @@ allow-list, a converter, a shared model), stop and ask the lead, saying exactly 
   ```
 
   `ShouldBe` also checks the request carried the API key. Assert a multipart body through `call.Parts` (name, file
-  name, content type, text) instead of `body`.
+  name, content type, text) instead of `body`. JSON bodies use System.Text.Json's default escaping, so an expected body
+  spells `+`, `&`, `<`, `>` and `'` as `+`, `&`, `<`, `>` and `'` (for example
+  `"tlp":"amber+strict"`); write those expectations in a regular string, or avoid the characters in test data.
 - Every response model has a mapping test asserting **every** modelled field, from the reference's example response
   (anonymise organisation names, emails and keys). Use `TestClient.ReadAsync`.
 - Each interface has at least one error test: `TestClient.ShouldFailAsync(call, status, body, expectedMessage)`.
 - Shared JSON goes in constants or a `Support/<Category>TestKit.cs`, repeated assertions in helpers, so Codacy finds no
   duplication. No skipped tests (`failSkips`), no `Thread.Sleep`, no network.
 - Line and branch coverage of what you add must be 100%.
+- These core tests already enforce the rules above on everything you add; do not weaken them:
+  - `InventoryTests`: rows, client methods, tests and pending categories in step.
+  - `ApiSurfaceTests`: no optional parameters in the public API; endpoint interfaces public; every endpoint method a
+    Refit operation ending in a `CancellationToken`; attribute paths relative, starting `api/v` and ending in `/`; no
+    `HttpResponseMessage` or `ApiResponse<T>` returns; exactly one `ThreatStreamClient` property per interface, with
+    unique names; `[JsonPropertyName]` (or `[AliasAs]` on query options) on every model property; timestamps typed
+    `DateTimeOffset?`. If an endpoint genuinely needs an exception (a path without a trailing slash that a live
+    deployment requires), ask the lead.
+- Throwaway scripts and captured responses go under `temp/<your category>/` (git-ignored), never the shared scratchpad
+  root, so parallel agents do not overwrite each other.
 
 ## Live verification (ThreatStream.Api.IntegrationTest)
 
