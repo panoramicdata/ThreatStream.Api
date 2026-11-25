@@ -70,8 +70,13 @@ public sealed class ThreatStreamFixture : IDisposable
 	private static ThreatStreamRegion RegionOf(string baseUrl)
 	{
 		var normalized = baseUrl.TrimEnd('/') + "/";
-		return normalized.Equals(ThreatStreamClientOptions.UsBaseUrl, StringComparison.OrdinalIgnoreCase) ? ThreatStreamRegion.Us
-			: normalized.Equals(ThreatStreamClientOptions.EuBaseUrl, StringComparison.OrdinalIgnoreCase) ? ThreatStreamRegion.Eu
+		if (normalized.Equals(ThreatStreamClientOptions.UsBaseUrl, StringComparison.OrdinalIgnoreCase))
+		{
+			return ThreatStreamRegion.Us;
+		}
+
+		return normalized.Equals(ThreatStreamClientOptions.EuBaseUrl, StringComparison.OrdinalIgnoreCase)
+			? ThreatStreamRegion.Eu
 			: ThreatStreamRegion.Custom;
 	}
 

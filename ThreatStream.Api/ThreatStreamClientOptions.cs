@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
@@ -20,6 +21,7 @@ namespace ThreatStream.Api;
 /// renewed before it expires. Credentials never travel in the URL.
 /// </para>
 /// </remarks>
+[SuppressMessage("Major Bug", "S3928:Parameter names used into ArgumentException constructors should match an existing one", Justification = "The options object is the argument: Validate names the invalid option property in ParamName, a contract OptionsTests and ClientTests pin.")]
 public sealed partial class ThreatStreamClientOptions
 {
 	/// <summary>The base URL of the US cloud.</summary>

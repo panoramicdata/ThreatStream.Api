@@ -28,11 +28,19 @@ public sealed partial class ThreatStreamClient
 	/// <see cref="EnumerateByUpdateIdAsync{T}"/> for those.
 	/// </para>
 	/// </remarks>
-	public async IAsyncEnumerable<T> EnumerateAsync<T>(
+	/// <exception cref="ArgumentNullException"><paramref name="firstPage"/> is null.</exception>
+	public IAsyncEnumerable<T> EnumerateAsync<T>(
+		Func<CancellationToken, Task<ThreatStreamPage<T>>> firstPage,
+		CancellationToken cancellationToken)
+	{
+		ArgumentNullException.ThrowIfNull(firstPage);
+		return EnumerateFromAsync(firstPage, cancellationToken);
+	}
+
+	private async IAsyncEnumerable<T> EnumerateFromAsync<T>(
 		Func<CancellationToken, Task<ThreatStreamPage<T>>> firstPage,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(firstPage);
 		var page = await firstPage(cancellationToken).ConfigureAwait(false);
 		var followed = new HashSet<string>(StringComparer.Ordinal);
 		while (true)
@@ -71,15 +79,25 @@ public sealed partial class ThreatStreamClient
 	/// <returns>Every object, page by page.</returns>
 	/// <exception cref="InvalidOperationException">A page did not advance past the previous <c>update_id</c>, which means the
 	/// query ignores it and would repeat forever.</exception>
+	/// <exception cref="ArgumentNullException"><paramref name="getPage"/> or <paramref name="updateIdOf"/> is null.</exception>
 	/// <remarks>For a continuous sync, also bound the query with <c>modified_ts__lt</c> set to a minute ago.</remarks>
-	public static async IAsyncEnumerable<T> EnumerateByUpdateIdAsync<T>(
+	public static IAsyncEnumerable<T> EnumerateByUpdateIdAsync<T>(
+		Func<long, CancellationToken, Task<ThreatStreamPage<T>>> getPage,
+		Func<T, long> updateIdOf,
+		long afterUpdateId,
+		CancellationToken cancellationToken)
+	{
+		ArgumentNullException.ThrowIfNull(getPage);
+		ArgumentNullException.ThrowIfNull(updateIdOf);
+		return EnumerateByUpdateIdFromAsync(getPage, updateIdOf, afterUpdateId, cancellationToken);
+	}
+
+	private static async IAsyncEnumerable<T> EnumerateByUpdateIdFromAsync<T>(
 		Func<long, CancellationToken, Task<ThreatStreamPage<T>>> getPage,
 		Func<T, long> updateIdOf,
 		long afterUpdateId,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		ArgumentNullException.ThrowIfNull(getPage);
-		ArgumentNullException.ThrowIfNull(updateIdOf);
 		var last = afterUpdateId;
 		while (true)
 		{

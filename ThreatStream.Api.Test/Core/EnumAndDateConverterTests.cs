@@ -112,7 +112,7 @@ public class EnumAndDateConverterTests
 		var value = Json.Read(new TolerantDateTimeOffsetConverter(), json);
 
 		value.Should().Be(DateTimeOffset.Parse(expected, System.Globalization.CultureInfo.InvariantCulture));
-		value!.Value.Offset.Should().Be(TimeSpan.Zero);
+		value.Value.Offset.Should().Be(TimeSpan.Zero);
 	}
 
 	[Theory]

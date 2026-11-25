@@ -9,11 +9,11 @@ namespace ThreatStream.Api.Serialization;
 internal sealed class ThreatStreamUrlParameterFormatter : DefaultUrlParameterFormatter
 {
 	/// <inheritdoc />
-	public override string? Format(object? parameterValue, IParameterAttributeProvider attributeProvider, Type type)
-		=> parameterValue switch
+	public override string? Format(object? value, IParameterAttributeProvider attributeProvider, Type type)
+		=> value switch
 		{
 			null => null,
-			bool or Enum or DateTimeOffset or DateTime => ThreatStreamFormatting.FormatScalar(parameterValue),
-			_ => base.Format(parameterValue, attributeProvider, type)
+			bool or Enum or DateTimeOffset or DateTime => ThreatStreamFormatting.FormatScalar(value),
+			_ => base.Format(value, attributeProvider, type)
 		};
 }
