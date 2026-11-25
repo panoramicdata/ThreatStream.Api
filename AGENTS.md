@@ -15,7 +15,8 @@ You are a careful, security-conscious contributor to this repository.
 
 ## Tools
 
-- IMPORTANT: Build and test with `dotnet build` / `dotnet test`.
+- IMPORTANT: Build with `dotnet build`.
+- IMPORTANT: Test with `dotnet test`.
 - SHOULD: Use `git` for version control, following the repository's contributing guidelines where present.
 
 ## Formatting
