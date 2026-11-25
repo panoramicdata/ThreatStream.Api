@@ -5,7 +5,7 @@ namespace ThreatStream.Api.Models.ThreatModels;
 
 /// <summary>An attack pattern: a way adversaries compromise targets, often from MITRE ATT&amp;CK (<c>api/v1/attackpattern/</c>).</summary>
 /// <remarks><c>parent</c> is internal to ThreatStream and stays in <see cref="ThreatStreamObject.AdditionalProperties"/>.</remarks>
-public sealed partial class AttackPattern : ThreatModelEntity
+public sealed partial class AttackPattern : StixThreatModelEntity
 {
 	/// <summary>Other names the attack pattern is known by (<c>aliases</c>).</summary>
 	[JsonPropertyName("aliases")]
