@@ -68,8 +68,8 @@ public sealed class ThreatStreamClientOptions
 	/// without approval) and every sub-path (<c>import/</c>, <c>bulk_tagging/</c>, <c>{id}/clone/</c>...) are refused.
 	/// </summary>
 	/// <remarks>
-	/// A few GET operations still start server-side jobs and pass the guard: generating a PDF report
-	/// (<c>api/v1/alfred/report/</c>) and user audit reports requested with <c>async_result</c>. Use a read-only
+	/// GET operations that start a server-side job are refused too: generating a PDF report
+	/// (<c>api/v1/alfred/report/</c>) and any request with <c>async_result=true</c> (user audit reports). Use a read-only
 	/// ThreatStream user for a truly read-only identity.
 	/// </remarks>
 	public bool IsReadOnly { get; set; }
