@@ -23,10 +23,10 @@ namespace ThreatStream.Api;
 public sealed class ThreatStreamClientOptions
 {
 	/// <summary>The base URL of the US cloud.</summary>
-	public const string UsBaseUrl = "https://api.threatstream.com/";
+	public static string UsBaseUrl { get; } = "https://api.threatstream.com/";
 
 	/// <summary>The base URL of the EU cloud.</summary>
-	public const string EuBaseUrl = "https://api-eu.threatstream.com/";
+	public static string EuBaseUrl { get; } = "https://api-eu.threatstream.com/";
 
 	private static readonly TimeSpan MaxTimerDuration = TimeSpan.FromMilliseconds(int.MaxValue);
 
@@ -168,6 +168,11 @@ public sealed class ThreatStreamClientOptions
 			return;
 		}
 
+		ValidateCustomBaseUrl();
+	}
+
+	private void ValidateCustomBaseUrl()
+	{
 		// Absolute alone is not enough: on Linux a rooted path such as "/relative/path" parses as a file:// URI.
 		if (!Uri.TryCreate(BaseUrl, UriKind.Absolute, out var baseUri)
 			|| (baseUri.Scheme != Uri.UriSchemeHttp && baseUri.Scheme != Uri.UriSchemeHttps))
