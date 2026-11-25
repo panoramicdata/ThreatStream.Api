@@ -12,14 +12,6 @@ namespace ThreatStream.Api.Models.ThreatModels;
 /// </remarks>
 public sealed partial class ThreatBulletin : ThreatModelEntity
 {
-	/// <summary>The bulletin's full text, up to 100 MB, in the <see cref="BodyContentType"/> format (<c>body</c>).</summary>
-	[JsonPropertyName("body")]
-	public string? Body { get; init; }
-
-	/// <summary>The format of <see cref="Body"/> (<c>body_content_type</c>).</summary>
-	[JsonPropertyName("body_content_type")]
-	public ThreatModelBodyContentType? BodyContentType { get; init; }
-
 	/// <summary>The bulletin's stage, shown as Stage in the user interface (<c>status</c>).</summary>
 	[JsonPropertyName("status")]
 	public ThreatModelPublicationStatus? Status { get; init; }
@@ -39,4 +31,12 @@ public sealed partial class ThreatBulletin : ThreatModelEntity
 	/// <summary>The source of the intelligence, such as <c>USCERT</c> (<c>source</c>).</summary>
 	[JsonPropertyName("source")]
 	public string? Source { get; init; }
+
+	/// <summary>The bulletin's full text, up to 100 MB, in the <see cref="BodyContentType"/> format (<c>body</c>).</summary>
+	[JsonPropertyName("body")]
+	public string? Body { get; init; }
+
+	/// <summary>The format of <see cref="Body"/> (<c>body_content_type</c>).</summary>
+	[JsonPropertyName("body_content_type")]
+	public ThreatModelBodyContentType? BodyContentType { get; init; }
 }

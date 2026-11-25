@@ -12,6 +12,10 @@ public sealed partial class ObservableImportRequest
 	[JsonPropertyName("campaigns")]
 	public IReadOnlyList<long>? Campaigns { get; init; }
 
+	/// <summary>Threat bulletins to associate the observables with (<c>tipreports</c>).</summary>
+	[JsonPropertyName("tipreports")]
+	public IReadOnlyList<long>? ThreatBulletins { get; init; }
+
 	/// <summary>Incidents to associate the observables with (<c>incidents</c>).</summary>
 	[JsonPropertyName("incidents")]
 	public IReadOnlyList<long>? Incidents { get; init; }
@@ -19,10 +23,6 @@ public sealed partial class ObservableImportRequest
 	/// <summary>Malware to associate the observables with (<c>malware</c>).</summary>
 	[JsonPropertyName("malware")]
 	public IReadOnlyList<long>? Malware { get; init; }
-
-	/// <summary>Threat bulletins to associate the observables with (<c>tipreports</c>).</summary>
-	[JsonPropertyName("tipreports")]
-	public IReadOnlyList<long>? ThreatBulletins { get; init; }
 
 	/// <summary>TTPs to associate the observables with (<c>ttps</c>).</summary>
 	[JsonPropertyName("ttps")]

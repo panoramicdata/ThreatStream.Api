@@ -64,7 +64,7 @@ public class IncidentsTests
 		call.ShouldBe(
 			HttpMethod.Post,
 			"/api/v1/incident/",
-			body: """{"name":"i","start_date":"2014-10-02T20:44:35Z","end_date":"2014-10-09T20:44:35Z","victims":[13],"actors":[223],"sandbox_reports":[31]}""");
+			body: """{"name":"i","actors":[223],"victims":[13],"sandbox_reports":[31],"start_date":"2014-10-02T20:44:35Z","end_date":"2014-10-09T20:44:35Z"}""");
 	}
 
 	[Fact]

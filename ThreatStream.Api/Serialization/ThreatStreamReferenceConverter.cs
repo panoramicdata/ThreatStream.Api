@@ -62,17 +62,17 @@ internal sealed class ThreatStreamReferenceConverter : JsonConverter<ThreatStrea
 		[JsonPropertyName("id")]
 		public long? Id { get; init; }
 
-		[JsonPropertyName("name")]
-		public string? Name { get; init; }
+		[JsonPropertyName("display_name")]
+		public string? DisplayName { get; init; }
 
 		[JsonPropertyName("value")]
 		public string? Value { get; init; }
 
-		[JsonPropertyName("display_name")]
-		public string? DisplayName { get; init; }
-
 		[JsonPropertyName("resource_uri")]
 		public string? ResourceUri { get; init; }
+
+		[JsonPropertyName("name")]
+		public string? Name { get; init; }
 
 		[JsonExtensionData]
 		public IDictionary<string, JsonElement> AdditionalProperties { get; init; } = new Dictionary<string, JsonElement>();
