@@ -35,6 +35,22 @@ public interface IActors
 	[Get("api/v1/actor/{id}/")]
 	Task<Actor> GetAsync(long id, [Query] ThreatModelDetailOptions? options, CancellationToken cancellationToken);
 
+	/// <summary>
+	/// Gets the entities of one type associated with an actor (<c>GET api/v1/actor/{id}/{entity_type}/</c>), such as its
+	/// malware (<c>api/v1/actor/234673/malware/</c>).
+	/// </summary>
+	/// <param name="id">The actor's ID.</param>
+	/// <param name="entityType">The type of the associated entities, sent as its path name (<c>malware</c>, <c>campaign</c>...).</param>
+	/// <param name="options">Paging and ordering, or <see langword="null"/>.</param>
+	/// <param name="cancellationToken">A cancellation token.</param>
+	/// <returns>One page of entities; each type's own attributes are in <see cref="ThreatStreamObject.AdditionalProperties"/>.</returns>
+	/// <remarks>
+	/// The reference shows only the <c>malware</c> example; the other path names are those of the type endpoints. For the
+	/// associated observables use <see cref="ListIntelligenceAsync"/>.
+	/// </remarks>
+	[Get("api/v1/actor/{id}/{entityType}/")]
+	Task<ThreatStreamPage<ThreatModelAssociatedEntity>> ListLinkedAsync(long id, ThreatModelType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
+
 	/// <summary>Changes an actor (<c>PATCH api/v1/actor/{id}/</c>). Changes ThreatStream: refused by a read-only client.</summary>
 	/// <param name="id">The actor's ID.</param>
 	/// <param name="request">The attributes to change; those left <see langword="null"/> are not sent.</param>
@@ -42,6 +58,14 @@ public interface IActors
 	/// <returns>The updated actor, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/actor/{id}/")]
 	Task<Actor?> UpdateAsync(long id, [Body] ActorUpdateRequest request, CancellationToken cancellationToken);
+
+	/// <summary>Gets the observables associated with an actor (<c>GET api/v1/actor/{id}/intelligence/</c>).</summary>
+	/// <param name="id">The actor's ID.</param>
+	/// <param name="options">Paging and ordering, or <see langword="null"/>.</param>
+	/// <param name="cancellationToken">A cancellation token.</param>
+	/// <returns>One page of observables.</returns>
+	[Get("api/v1/actor/{id}/intelligence/")]
+	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Gets the actors associated with an observable value (<c>GET api/v1/actor/associated_with_intelligence/?value=</c>).
@@ -64,28 +88,4 @@ public interface IActors
 	/// <returns>One page of actors.</returns>
 	[Get("api/v1/actor/associated_with_intelligence/")]
 	Task<ThreatStreamPage<Actor>> ListAssociatedWithIdsAsync([AliasAs("ids")] IReadOnlyList<long> ids, [Query] ListOptions? options, CancellationToken cancellationToken);
-
-	/// <summary>
-	/// Gets the entities of one type associated with an actor (<c>GET api/v1/actor/{id}/{entity_type}/</c>), such as its
-	/// malware (<c>api/v1/actor/234673/malware/</c>).
-	/// </summary>
-	/// <param name="id">The actor's ID.</param>
-	/// <param name="entityType">The type of the associated entities, sent as its path name (<c>malware</c>, <c>campaign</c>...).</param>
-	/// <param name="options">Paging and ordering, or <see langword="null"/>.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>One page of entities; each type's own attributes are in <see cref="ThreatStreamObject.AdditionalProperties"/>.</returns>
-	/// <remarks>
-	/// The reference shows only the <c>malware</c> example; the other path names are those of the type endpoints. For the
-	/// associated observables use <see cref="ListIntelligenceAsync"/>.
-	/// </remarks>
-	[Get("api/v1/actor/{id}/{entityType}/")]
-	Task<ThreatStreamPage<ThreatModelAssociatedEntity>> ListLinkedAsync(long id, ThreatModelType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
-
-	/// <summary>Gets the observables associated with an actor (<c>GET api/v1/actor/{id}/intelligence/</c>).</summary>
-	/// <param name="id">The actor's ID.</param>
-	/// <param name="options">Paging and ordering, or <see langword="null"/>.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>One page of observables.</returns>
-	[Get("api/v1/actor/{id}/intelligence/")]
-	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 }

@@ -36,6 +36,18 @@ public interface ISignatures
 	[Get("api/v1/signature/{id}/")]
 	Task<Signature> GetAsync(long id, [Query] ThreatModelDetailOptions? options, CancellationToken cancellationToken);
 
+	/// <summary>
+	/// Lists the entities of one type linked to a signature (<c>GET api/v1/signature/{id}/{entity_type}/</c>), such as its
+	/// actors (<c>api/v1/signature/234673/actor/</c>).
+	/// </summary>
+	/// <param name="id">The signature's ID.</param>
+	/// <param name="entityType">The type of the linked entities.</param>
+	/// <param name="options">Paging and order, or <see langword="null"/>.</param>
+	/// <param name="cancellationToken">A cancellation token.</param>
+	/// <returns>One page of linked entities.</returns>
+	[Get("api/v1/signature/{id}/{entityType}/")]
+	Task<ThreatStreamPage<ThreatModelAssociatedEntity>> ListLinkedAsync(long id, ThreatModelType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
+
 	/// <summary>Changes a signature (<c>PATCH api/v1/signature/{id}/</c>).</summary>
 	/// <param name="id">The signature's ID.</param>
 	/// <param name="request">The fields to change; those left <see langword="null"/> are kept.</param>
@@ -44,6 +56,14 @@ public interface ISignatures
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Patch("api/v1/signature/{id}/")]
 	Task<Signature?> UpdateAsync(long id, [Body] SignatureUpdateRequest request, CancellationToken cancellationToken);
+
+	/// <summary>Lists the observables associated with a signature (<c>GET api/v1/signature/{id}/intelligence/</c>).</summary>
+	/// <param name="id">The signature's ID.</param>
+	/// <param name="options">Paging and order, or <see langword="null"/>.</param>
+	/// <param name="cancellationToken">A cancellation token.</param>
+	/// <returns>One page of observables.</returns>
+	[Get("api/v1/signature/{id}/intelligence/")]
+	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the signatures associated with an observable value (<c>GET api/v1/signature/associated_with_intelligence/?value=</c>).</summary>
 	/// <param name="value">The observable's value, such as <c>google.com</c>.</param>
@@ -62,26 +82,6 @@ public interface ISignatures
 	/// <remarks>150 requests per minute per user.</remarks>
 	[Get("api/v1/signature/associated_with_intelligence/")]
 	Task<ThreatStreamPage<Signature>> ListAssociatedWithIdsAsync([AliasAs("ids")] IReadOnlyList<long> ids, [Query] ListOptions? options, CancellationToken cancellationToken);
-
-	/// <summary>
-	/// Lists the entities of one type linked to a signature (<c>GET api/v1/signature/{id}/{entity_type}/</c>), such as its
-	/// actors (<c>api/v1/signature/234673/actor/</c>).
-	/// </summary>
-	/// <param name="id">The signature's ID.</param>
-	/// <param name="entityType">The type of the linked entities.</param>
-	/// <param name="options">Paging and order, or <see langword="null"/>.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>One page of linked entities.</returns>
-	[Get("api/v1/signature/{id}/{entityType}/")]
-	Task<ThreatStreamPage<ThreatModelAssociatedEntity>> ListLinkedAsync(long id, ThreatModelType entityType, [Query] ListOptions? options, CancellationToken cancellationToken);
-
-	/// <summary>Lists the observables associated with a signature (<c>GET api/v1/signature/{id}/intelligence/</c>).</summary>
-	/// <param name="id">The signature's ID.</param>
-	/// <param name="options">Paging and order, or <see langword="null"/>.</param>
-	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>One page of observables.</returns>
-	[Get("api/v1/signature/{id}/intelligence/")]
-	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Lists the signature types and the IDs a new signature names its type by (<c>GET api/v1/signature_type/</c>).</summary>
 	/// <param name="options">Paging and order, or <see langword="null"/>.</param>
