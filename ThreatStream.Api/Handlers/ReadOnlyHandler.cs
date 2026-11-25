@@ -28,11 +28,22 @@ internal sealed partial class ReadOnlyHandler(Uri baseUri) : DelegatingHandler
 		return base.SendAsync(request, cancellationToken);
 	}
 
+	/// <summary>
+	/// GET operations that start a server-side job and so are not read-only: generating a PDF report. A request that asks
+	/// for an asynchronous result (<c>async_result=true</c>, used by user audit reports) is refused too.
+	/// </summary>
+	[GeneratedRegex(@"^api/v1/alfred/report/?$", RegexOptions.CultureInvariant)]
+	private static partial Regex JobStartingGets();
+
+	private bool StartsJob(HttpRequestMessage request)
+		=> request.RequestUri!.Query.Contains("async_result=true", StringComparison.OrdinalIgnoreCase)
+			|| (RelativePath.Of(baseUri, request.RequestUri) is { } relative && JobStartingGets().IsMatch(relative));
+
 	private bool IsAllowed(HttpRequestMessage request)
 	{
 		if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head)
 		{
-			return true;
+			return !StartsJob(request);
 		}
 
 		return request.Method == HttpMethod.Post

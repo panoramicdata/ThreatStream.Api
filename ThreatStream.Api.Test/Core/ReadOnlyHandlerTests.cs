@@ -17,7 +17,6 @@ public class ReadOnlyHandlerTests
 
 	[Theory]
 	[InlineData("GET", "api/v2/intelligence/")]
-	[InlineData("GET", "api/v1/alfred/report/?resource_name=actor")]
 	[InlineData("HEAD", "api/v1/feed/")]
 	[InlineData("POST", "oauth/token")]
 	[InlineData("POST", "oauth/token/")]
@@ -34,6 +33,9 @@ public class ReadOnlyHandlerTests
 	}
 
 	[Theory]
+	[InlineData("GET", "api/v1/alfred/report/?resource_name=actor")]
+	[InlineData("GET", "api/v1/alfred/report?resource_name=actor")]
+	[InlineData("GET", "api/v1/useraction/?async_result=true")]
 	[InlineData("PATCH", "api/v2/intelligence/")]
 	[InlineData("DELETE", "api/v2/intelligence/")]
 	[InlineData("PUT", "api/v2/intelligence/")]
