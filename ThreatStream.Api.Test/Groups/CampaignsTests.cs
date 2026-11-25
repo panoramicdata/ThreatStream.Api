@@ -24,47 +24,40 @@ public class CampaignsTests
 		call.ShouldBe(HttpMethod.Get, "/api/v1/campaign/", "?limit=10");
 	}
 
-	[Fact]
-	public async Task CreateAsync_SendsPostWithJsonBody()
+	private static async Task CreateShouldSendAsync(CampaignCreateRequest request, string body)
 	{
-		var request = new CampaignCreateRequest
-		{
-			Name = "dummy test campaign",
-			Tlp = Tlp.Red,
-			Tags = ["big campaign", "dummy tag"],
-			Intelligence = [165546],
-			PublicationStatus = ThreatModelPublicationStatus.Published
-		};
-
 		var call = await TestClient.CaptureAsync((client, ct) => client.Campaigns.CreateAsync(request, ct), CampaignJson);
 
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/campaign/",
-			body: """{"name":"dummy test campaign","tags":["big campaign","dummy tag"],"tlp":"red","publication_status":"published","intelligence":[165546]}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/campaign/", body: body);
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsEveryOwnAttribute()
-	{
-		var request = new CampaignCreateRequest
-		{
-			Name = "c",
-			Status = 1,
-			StartDate = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
-			EndDate = new DateTimeOffset(2014, 11, 2, 20, 44, 35, TimeSpan.Zero),
-			Victims = [13],
-			Actors = [223],
-			Incidents = [79]
-		};
+	public Task CreateAsync_SendsPostWithJsonBody()
+		=> CreateShouldSendAsync(
+			new CampaignCreateRequest
+			{
+				Name = "dummy test campaign",
+				Tlp = Tlp.Red,
+				Tags = ["big campaign", "dummy tag"],
+				Intelligence = [165546],
+				PublicationStatus = ThreatModelPublicationStatus.Published
+			},
+			"""{"name":"dummy test campaign","tags":["big campaign","dummy tag"],"tlp":"red","publication_status":"published","intelligence":[165546]}""");
 
-		var call = await TestClient.CaptureAsync((client, ct) => client.Campaigns.CreateAsync(request, ct), CampaignJson);
-
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/campaign/",
-			body: """{"name":"c","status":1,"start_date":"2014-10-02T20:44:35Z","end_date":"2014-11-02T20:44:35Z","victims":[13],"actors":[223],"incidents":[79]}""");
-	}
+	[Fact]
+	public Task CreateAsync_SendsEveryOwnAttribute()
+		=> CreateShouldSendAsync(
+			new CampaignCreateRequest
+			{
+				Name = "c",
+				Status = 1,
+				StartDate = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
+				EndDate = new DateTimeOffset(2014, 11, 2, 20, 44, 35, TimeSpan.Zero),
+				Victims = [13],
+				Actors = [223],
+				Incidents = [79]
+			},
+			"""{"name":"c","status":1,"start_date":"2014-10-02T20:44:35Z","end_date":"2014-11-02T20:44:35Z","victims":[13],"actors":[223],"incidents":[79]}""");
 
 	[Fact]
 	public async Task GetAsync_SendsGet()

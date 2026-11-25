@@ -48,27 +48,23 @@ public partial class ThreatBulletinsTests
 	}
 
 	[Fact]
-	public async Task UpdateAsync_SendsEveryField()
-	{
-		var request = new ThreatBulletinUpdateRequest
-		{
-			Body = "b",
-			BodyContentType = ThreatModelBodyContentType.Markdown,
-			Status = ThreatModelPublicationStatus.Published,
-			AssigneeOrgId = 42,
-			AssigneeUserId = 7,
-			IsAnonymous = false,
-			Source = "USCERT",
-			ImportSessions = [301],
-			SandboxReports = [77]
-		};
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatBulletins.UpdateAsync(11, request, ct), ThreatBulletinJson);
-
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/tipreport/11/", body: "{\"body\":\"b\",\"body_content_type\":\"markdown\",\"status\":\"published\","
-			+ "\"assignee_org_id\":42,\"assignee_user_id\":7,\"is_anonymous\":false,\"source\":\"USCERT\","
-			+ "\"import_sessions\":[301],\"sandbox_reports\":[77]}");
-	}
+	public Task UpdateAsync_SendsEveryField()
+		=> UpdateShouldSendAsync(
+			new ThreatBulletinUpdateRequest
+			{
+				Body = "b",
+				BodyContentType = ThreatModelBodyContentType.Markdown,
+				Status = ThreatModelPublicationStatus.Published,
+				AssigneeOrgId = 42,
+				AssigneeUserId = 7,
+				IsAnonymous = false,
+				Source = "USCERT",
+				ImportSessions = [301],
+				SandboxReports = [77]
+			},
+			"{\"body\":\"b\",\"body_content_type\":\"markdown\",\"status\":\"published\","
+				+ "\"assignee_org_id\":42,\"assignee_user_id\":7,\"is_anonymous\":false,\"source\":\"USCERT\","
+				+ "\"import_sessions\":[301],\"sandbox_reports\":[77]}");
 
 	[Fact]
 	public async Task AddAttachmentAsync_SendsTheFileAndItsName()

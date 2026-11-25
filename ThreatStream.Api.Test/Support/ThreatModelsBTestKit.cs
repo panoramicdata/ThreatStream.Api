@@ -53,20 +53,27 @@ internal static class ThreatModelsBTestKit
 	}
 
 	/// <summary>Asserts the escaped value and paging of an associated-with-intelligence lookup by value.</summary>
-	public static async Task AssociatedWithValueShouldSendAsync<T>(Func<ThreatStreamClient, string, ListOptions?, CancellationToken, Task<ThreatStreamPage<T>>> lookup, string type)
-	{
-		var path = $"/api/v1/{type}/associated_with_intelligence/";
-		(await TestClient.CaptureAsync((client, ct) => lookup(client, "google.com", null, ct), EmptyPage)).ShouldBe(HttpMethod.Get, path, "?value=google.com");
-		(await TestClient.CaptureAsync((client, ct) => lookup(client, "http://a.example/?b=c&d", Paging, ct), EmptyPage))
-			.ShouldBe(HttpMethod.Get, path, "?value=http%3A%2F%2Fa.example%2F%3Fb%3Dc%26d&limit=10&offset=20");
-	}
+	public static Task AssociatedWithValueShouldSendAsync<T>(Func<ThreatStreamClient, string, ListOptions?, CancellationToken, Task<ThreatStreamPage<T>>> lookup, string type)
+		=> AssociatedShouldSendAsync(
+			lookup,
+			type,
+			("google.com", "?value=google.com"),
+			("http://a.example/?b=c&d", "?value=http%3A%2F%2Fa.example%2F%3Fb%3Dc%26d&limit=10&offset=20"));
 
 	/// <summary>Asserts the comma-separated IDs and paging of an associated-with-intelligence lookup by observable IDs.</summary>
-	public static async Task AssociatedWithIdsShouldSendAsync<T>(Func<ThreatStreamClient, IReadOnlyList<long>, ListOptions?, CancellationToken, Task<ThreatStreamPage<T>>> lookup, string type)
+	public static Task AssociatedWithIdsShouldSendAsync<T>(Func<ThreatStreamClient, IReadOnlyList<long>, ListOptions?, CancellationToken, Task<ThreatStreamPage<T>>> lookup, string type)
+		=> AssociatedShouldSendAsync<IReadOnlyList<long>, T>(lookup, type, ([165546, 165547], "?ids=165546%2C165547"), ([1], "?ids=1&" + PagingQuery[1..]));
+
+	/// <summary>Asserts an associated-with-intelligence lookup's query for <paramref name="unpaged"/> without options, and for <paramref name="paged"/> with paging.</summary>
+	private static async Task AssociatedShouldSendAsync<TKey, T>(
+		Func<ThreatStreamClient, TKey, ListOptions?, CancellationToken, Task<ThreatStreamPage<T>>> lookup,
+		string type,
+		(TKey Key, string Query) unpaged,
+		(TKey Key, string Query) paged)
 	{
 		var path = $"/api/v1/{type}/associated_with_intelligence/";
-		(await TestClient.CaptureAsync((client, ct) => lookup(client, [165546, 165547], null, ct), EmptyPage)).ShouldBe(HttpMethod.Get, path, "?ids=165546%2C165547");
-		(await TestClient.CaptureAsync((client, ct) => lookup(client, [1], Paging, ct), EmptyPage)).ShouldBe(HttpMethod.Get, path, "?ids=1&" + PagingQuery[1..]);
+		(await TestClient.CaptureAsync((client, ct) => lookup(client, unpaged.Key, null, ct), EmptyPage)).ShouldBe(HttpMethod.Get, path, unpaged.Query);
+		(await TestClient.CaptureAsync((client, ct) => lookup(client, paged.Key, Paging, ct), EmptyPage)).ShouldBe(HttpMethod.Get, path, paged.Query);
 	}
 
 	/// <summary>Asserts the path and paging of a linked-entities list, and that it reads the linked entities.</summary>

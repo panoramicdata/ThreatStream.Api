@@ -1,4 +1,5 @@
 using System.Net;
+using ThreatStream.Api.Interfaces;
 using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.UsersRoles;
 using ThreatStream.Api.Test.Support;
@@ -9,23 +10,37 @@ namespace ThreatStream.Api.Test.Groups;
 
 public class SsoPermissionsTests
 {
-	[Fact]
-	public async Task ListAsync_SendsGetForTheIdentityProvider()
-	{
-		var call = await TestClient.CaptureAsync((client, ct) => client.SsoPermissions.ListAsync(159, null, ct), MappingsPageJson);
+	private const string Mappings = "/api/v1/ssopermission/";
+	private const string Mapping1692 = "/api/v1/ssopermission/1692/";
 
-		call.ShouldBe(HttpMethod.Get, "/api/v1/ssopermission/", "?identity_provider_id=159");
+	private static async Task ShouldSendAsync(
+		Func<ISsoPermissions, CancellationToken, Task> operation,
+		string response,
+		HttpMethod method,
+		string path,
+		string query = RecordedCallAssertions.NoQuery,
+		string? body = null)
+	{
+		var call = await TestClient.CaptureAsync((client, ct) => operation(client.SsoPermissions, ct), response);
+
+		call.ShouldBe(method, path, query, body);
 	}
 
-	[Fact]
-	public async Task ListAsync_SendsPaging()
-	{
-		var call = await TestClient.CaptureAsync(
-			(client, ct) => client.SsoPermissions.ListAsync(159, new ListOptions { Limit = 0 }, ct),
-			MappingsPageJson);
+	private static async Task ShouldMapTheExampleMappingAsync(Func<ISsoPermissions, CancellationToken, Task<SsoGroupMapping?>> operation)
+		=> (await TestClient.ReadAsync((client, ct) => operation(client.SsoPermissions, ct), MappingJson)).ShouldBeTheExampleMapping();
 
-		call.ShouldBe(HttpMethod.Get, "/api/v1/ssopermission/", "?identity_provider_id=159&limit=0");
-	}
+	[Fact]
+	public Task ListAsync_SendsGetForTheIdentityProvider()
+		=> ShouldSendAsync((sso, ct) => sso.ListAsync(159, null, ct), MappingsPageJson, HttpMethod.Get, Mappings, "?identity_provider_id=159");
+
+	[Fact]
+	public Task ListAsync_SendsPaging()
+		=> ShouldSendAsync(
+			(sso, ct) => sso.ListAsync(159, new ListOptions { Limit = 0 }, ct),
+			MappingsPageJson,
+			HttpMethod.Get,
+			Mappings,
+			"?identity_provider_id=159&limit=0");
 
 	[Fact]
 	public async Task ListAsync_MapsEveryField()
@@ -36,62 +51,45 @@ public class SsoPermissionsTests
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsPostWithGroupProviderAndRoles()
-	{
-		var request = new SsoGroupMappingCreateRequest { Group = "SecAdminGroup", IdpId = 9, Roles = [7] };
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.SsoPermissions.CreateAsync(request, ct), MappingJson);
-
-		call.ShouldBe(HttpMethod.Post, "/api/v1/ssopermission/", body: """{"group":"SecAdminGroup","idp_id":9,"roles":[7]}""");
-	}
-
-	[Fact]
-	public async Task CreateAsync_MapsTheNewMapping()
-	{
-		var request = new SsoGroupMappingCreateRequest { Group = "8x9x9f9t9w9sdf9pspdfg", IdpId = 159, Roles = [4567, 3238] };
-
-		var mapping = await TestClient.ReadAsync((client, ct) => client.SsoPermissions.CreateAsync(request, ct), MappingJson);
-
-		mapping.ShouldBeTheExampleMapping();
-	}
+	public Task CreateAsync_SendsPostWithGroupProviderAndRoles()
+		=> ShouldSendAsync(
+			(sso, ct) => sso.CreateAsync(new SsoGroupMappingCreateRequest { Group = "SecAdminGroup", IdpId = 9, Roles = [7] }, ct),
+			MappingJson,
+			HttpMethod.Post,
+			Mappings,
+			body: """{"group":"SecAdminGroup","idp_id":9,"roles":[7]}""");
 
 	[Fact]
-	public async Task UpdateAsync_SendsPatchWithProviderAndRoles()
-	{
-		var request = new SsoGroupMappingUpdateRequest { IdpId = 9, Roles = [7, 3001] };
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.SsoPermissions.UpdateAsync(1692, request, ct), MappingJson);
-
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/ssopermission/1692/", body: """{"idp_id":9,"roles":[7,3001]}""");
-	}
+	public Task CreateAsync_MapsTheNewMapping()
+		=> ShouldMapTheExampleMappingAsync((sso, ct) => sso.CreateAsync(
+			new SsoGroupMappingCreateRequest { Group = "8x9x9f9t9w9sdf9pspdfg", IdpId = 159, Roles = [4567, 3238] },
+			ct));
 
 	[Fact]
-	public async Task UpdateAsync_SendsANewGroupName()
-	{
-		var request = new SsoGroupMappingUpdateRequest { Group = "SecAdminGroup", IdpId = 7, Roles = [6] };
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.SsoPermissions.UpdateAsync(1692, request, ct), MappingJson);
-
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/ssopermission/1692/", body: """{"group":"SecAdminGroup","idp_id":7,"roles":[6]}""");
-	}
-
-	[Fact]
-	public async Task UpdateAsync_MapsTheUpdatedMapping()
-	{
-		var mapping = await TestClient.ReadAsync(
-			(client, ct) => client.SsoPermissions.UpdateAsync(1692, new SsoGroupMappingUpdateRequest { IdpId = 159 }, ct),
-			MappingJson);
-
-		mapping.ShouldBeTheExampleMapping();
-	}
+	public Task UpdateAsync_SendsPatchWithProviderAndRoles()
+		=> ShouldSendAsync(
+			(sso, ct) => sso.UpdateAsync(1692, new SsoGroupMappingUpdateRequest { IdpId = 9, Roles = [7, 3001] }, ct),
+			MappingJson,
+			HttpMethod.Patch,
+			Mapping1692,
+			body: """{"idp_id":9,"roles":[7,3001]}""");
 
 	[Fact]
-	public async Task DeleteAsync_SendsDelete()
-	{
-		var call = await TestClient.CaptureAsync((client, ct) => client.SsoPermissions.DeleteAsync(1692, ct), string.Empty);
+	public Task UpdateAsync_SendsANewGroupName()
+		=> ShouldSendAsync(
+			(sso, ct) => sso.UpdateAsync(1692, new SsoGroupMappingUpdateRequest { Group = "SecAdminGroup", IdpId = 7, Roles = [6] }, ct),
+			MappingJson,
+			HttpMethod.Patch,
+			Mapping1692,
+			body: """{"group":"SecAdminGroup","idp_id":7,"roles":[6]}""");
 
-		call.ShouldBe(HttpMethod.Delete, "/api/v1/ssopermission/1692/");
-	}
+	[Fact]
+	public Task UpdateAsync_MapsTheUpdatedMapping()
+		=> ShouldMapTheExampleMappingAsync((sso, ct) => sso.UpdateAsync(1692, new SsoGroupMappingUpdateRequest { IdpId = 159 }, ct));
+
+	[Fact]
+	public Task DeleteAsync_SendsDelete()
+		=> ShouldSendAsync((sso, ct) => sso.DeleteAsync(1692, ct), string.Empty, HttpMethod.Delete, Mapping1692);
 
 	[Fact]
 	public Task ListAsync_Error_RaisesThreatStreamApiException()

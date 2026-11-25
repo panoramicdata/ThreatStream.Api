@@ -69,52 +69,52 @@ public partial class OrgAdminUsersTests
 		user.ApiKey.Should().BeNull();
 	}
 
-	[Fact]
-	public async Task CreateAsync_SendsPostWithPrivileges()
+	private static async Task CreateShouldSendAsync(OrganizationUserCreateRequest request, string body)
 	{
-		// The reference's example: a non-Read Only user with every privilege.
-		var request = new OrganizationUserCreateRequest
-		{
-			Email = "newuser@example.com",
-			IsOrgAdmin = true,
-			CanApproveIntel = true,
-			CanShareIntelligence = true,
-			CanSeeApiKey = true,
-			CanImportToTaxiiInbox = true
-		};
-
 		var call = await TestClient.CaptureAsync((client, ct) => client.OrgAdminUsers.CreateAsync(request, ct), UserJson);
 
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/orgadmin/",
-			body: """{"email":"newuser@example.com","is_org_admin":true,"can_approve_intel":true,"can_share_intelligence":true,"can_see_api_key":true,"can_import_to_taxii_inbox":true}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/orgadmin/", body: body);
+	}
+
+	private static async Task UpdateShouldSendAsync(OrganizationUserUpdateRequest request, string body)
+	{
+		var call = await TestClient.CaptureAsync((client, ct) => client.OrgAdminUsers.UpdateAsync(145, request, ct), UserJson);
+
+		call.ShouldBe(HttpMethod.Patch, "/api/v1/orgadmin/145/", body: body);
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsEveryField()
-	{
-		var request = new OrganizationUserCreateRequest
-		{
-			Email = "reader@example.com",
-			IsOrgAdmin = false,
-			IsReadOnly = true,
-			CanApproveIntel = false,
-			CanShareIntelligence = false,
-			CanSeeApiKey = false,
-			CanImportToTaxiiInbox = false,
-			CanUseChat = true,
-			IsTfaExempt = false,
-			Roles = [7, 9]
-		};
+	public Task CreateAsync_SendsPostWithPrivileges()
+		=> CreateShouldSendAsync(
+			// The reference's example: a non-Read Only user with every privilege.
+			new OrganizationUserCreateRequest
+			{
+				Email = "newuser@example.com",
+				IsOrgAdmin = true,
+				CanApproveIntel = true,
+				CanShareIntelligence = true,
+				CanSeeApiKey = true,
+				CanImportToTaxiiInbox = true
+			},
+			"""{"email":"newuser@example.com","is_org_admin":true,"can_approve_intel":true,"can_share_intelligence":true,"can_see_api_key":true,"can_import_to_taxii_inbox":true}""");
 
-		var call = await TestClient.CaptureAsync((client, ct) => client.OrgAdminUsers.CreateAsync(request, ct), UserJson);
-
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/orgadmin/",
-			body: """{"email":"reader@example.com","is_org_admin":false,"is_readonly":true,"can_approve_intel":false,"can_share_intelligence":false,"can_see_api_key":false,"can_import_to_taxii_inbox":false,"can_use_chat":true,"is_tfa_exempt":false,"roles":[7,9]}""");
-	}
+	[Fact]
+	public Task CreateAsync_SendsEveryField()
+		=> CreateShouldSendAsync(
+			new OrganizationUserCreateRequest
+			{
+				Email = "reader@example.com",
+				IsOrgAdmin = false,
+				IsReadOnly = true,
+				CanApproveIntel = false,
+				CanShareIntelligence = false,
+				CanSeeApiKey = false,
+				CanImportToTaxiiInbox = false,
+				CanUseChat = true,
+				IsTfaExempt = false,
+				Roles = [7, 9]
+			},
+			"""{"email":"reader@example.com","is_org_admin":false,"is_readonly":true,"can_approve_intel":false,"can_share_intelligence":false,"can_see_api_key":false,"can_import_to_taxii_inbox":false,"can_use_chat":true,"is_tfa_exempt":false,"roles":[7,9]}""");
 
 	[Fact]
 	public async Task CreateAsync_WithRoles_MapsTheNewUser()
@@ -127,24 +127,14 @@ public partial class OrgAdminUsersTests
 	}
 
 	[Fact]
-	public async Task UpdateAsync_SendsPatchWithOnlyTheChanges()
-	{
-		var request = new OrganizationUserUpdateRequest { IsOrgAdmin = true };
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.OrgAdminUsers.UpdateAsync(145, request, ct), UserJson);
-
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/orgadmin/145/", body: """{"is_org_admin":true}""");
-	}
+	public Task UpdateAsync_SendsPatchWithOnlyTheChanges()
+		=> UpdateShouldSendAsync(new OrganizationUserUpdateRequest { IsOrgAdmin = true }, """{"is_org_admin":true}""");
 
 	[Fact]
-	public async Task UpdateAsync_SendsMustChangePasswordAndRoles()
-	{
-		var request = new OrganizationUserUpdateRequest { MustChangePassword = true, IsReadOnly = true, Roles = [] };
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.OrgAdminUsers.UpdateAsync(145, request, ct), UserJson);
-
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/orgadmin/145/", body: """{"must_change_password":true,"is_readonly":true,"roles":[]}""");
-	}
+	public Task UpdateAsync_SendsMustChangePasswordAndRoles()
+		=> UpdateShouldSendAsync(
+			new OrganizationUserUpdateRequest { MustChangePassword = true, IsReadOnly = true, Roles = [] },
+			"""{"must_change_password":true,"is_readonly":true,"roles":[]}""");
 
 	[Fact]
 	public async Task UpdateAsync_MapsTheUpdatedUser()

@@ -43,45 +43,41 @@ public class AttackPatternsTests
 		call.ShouldBe(HttpMethod.Get, "/api/v1/attackpattern/", "?limit=10");
 	}
 
-	[Fact]
-	public async Task CreateAsync_SendsPostWithJsonBody()
+	private static async Task CreateShouldSendAsync(AttackPatternCreateRequest request, string body)
 	{
-		var request = new AttackPatternCreateRequest { Name = "dummy test attack pattern", Tlp = Tlp.Red, Tags = ["attack pattern", "example tag"], Ttps = [63] };
-
 		var call = await TestClient.CaptureAsync((client, ct) => client.AttackPatterns.CreateAsync(request, ct), AttackPatternJson);
 
-		call.ShouldBe(HttpMethod.Post, "/api/v1/attackpattern/", body: """{"name":"dummy test attack pattern","tags":["attack pattern","example tag"],"tlp":"red","ttps":[63]}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/attackpattern/", body: body);
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsEveryOwnAttribute()
-	{
-		var request = new AttackPatternCreateRequest
-		{
-			Name = "p",
-			Aliases = "a",
-			AssigneeUser = 7,
-			Body = "b",
-			BodyContentType = ThreatModelBodyContentType.RichText,
-			KillChainStages = ["delivery"],
-			Actors = [1],
-			Campaigns = [2],
-			CoursesOfAction = [3],
-			Identities = [4],
-			Incidents = [5],
-			Infrastructure = [6],
-			IntrusionSets = [7],
-			ThreatBulletins = [8],
-			Vulnerabilities = [9]
-		};
+	public Task CreateAsync_SendsPostWithJsonBody()
+		=> CreateShouldSendAsync(
+			new AttackPatternCreateRequest { Name = "dummy test attack pattern", Tlp = Tlp.Red, Tags = ["attack pattern", "example tag"], Ttps = [63] },
+			"""{"name":"dummy test attack pattern","tags":["attack pattern","example tag"],"tlp":"red","ttps":[63]}""");
 
-		var call = await TestClient.CaptureAsync((client, ct) => client.AttackPatterns.CreateAsync(request, ct), AttackPatternJson);
-
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/attackpattern/",
-			body: """{"name":"p","aliases":"a","assignee_user":7,"body":"b","body_content_type":"richtext","killchainstages":["delivery"],"actors":[1],"campaigns":[2],"courseofaction":[3],"identities":[4],"incidents":[5],"infrastructure":[6],"intrusionsets":[7],"tipreports":[8],"vulnerability":[9]}""");
-	}
+	[Fact]
+	public Task CreateAsync_SendsEveryOwnAttribute()
+		=> CreateShouldSendAsync(
+			new AttackPatternCreateRequest
+			{
+				Name = "p",
+				Aliases = "a",
+				AssigneeUser = 7,
+				Body = "b",
+				BodyContentType = ThreatModelBodyContentType.RichText,
+				KillChainStages = ["delivery"],
+				Actors = [1],
+				Campaigns = [2],
+				CoursesOfAction = [3],
+				Identities = [4],
+				Incidents = [5],
+				Infrastructure = [6],
+				IntrusionSets = [7],
+				ThreatBulletins = [8],
+				Vulnerabilities = [9]
+			},
+			"""{"name":"p","aliases":"a","assignee_user":7,"body":"b","body_content_type":"richtext","killchainstages":["delivery"],"actors":[1],"campaigns":[2],"courseofaction":[3],"identities":[4],"incidents":[5],"infrastructure":[6],"intrusionsets":[7],"tipreports":[8],"vulnerability":[9]}""");
 
 	[Fact]
 	public async Task GetAsync_SendsGet()

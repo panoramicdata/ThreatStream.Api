@@ -46,13 +46,33 @@ public class PagingTests
 		return ids;
 	}
 
+	/// <summary>A stub that answers each request with the next of <paramref name="responses"/>, as 200 OK.</summary>
+	private static StubHandler Pages(params string[] responses)
+	{
+		var stub = new StubHandler();
+		foreach (var response in responses)
+		{
+			stub.Enqueue(HttpStatusCode.OK, response);
+		}
+
+		return stub;
+	}
+
+	/// <summary>Asserts that enumerating stops with <see cref="InvalidOperationException"/> after <paramref name="calls"/> requests.</summary>
+	private static async Task EnumerationShouldStopAsync(StubHandler stub, string message, int calls)
+	{
+		using var client = TestClient.Create(stub);
+
+		var act = () => EnumerateAsync(client);
+
+		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage(message);
+		stub.Calls.Should().HaveCount(calls);
+	}
+
 	[Fact]
 	public async Task EnumerateAsync_FollowsNextUntilTheLastPage()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?limit=2&offset=2", 1, 2));
-		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?limit=2&offset=4", 3, 4));
-		stub.Enqueue(HttpStatusCode.OK, Page(null, 5));
+		var stub = Pages(Page("/api/v1/probe/?limit=2&offset=2", 1, 2), Page("/api/v1/probe/?limit=2&offset=4", 3, 4), Page(null, 5));
 		using var client = TestClient.Create(stub);
 
 		var ids = await EnumerateAsync(client);
@@ -100,10 +120,7 @@ public class PagingTests
 	[Fact]
 	public async Task EnumerateAsync_KeepsTheBaseAddressPathPrefix()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
-		stub.Enqueue(HttpStatusCode.OK, Page("/ts/api/v1/probe/?offset=3", 2));
-		stub.Enqueue(HttpStatusCode.OK, Page(null, 3));
+		var stub = Pages(Page("/api/v1/probe/?offset=2", 1), Page("/ts/api/v1/probe/?offset=3", 2), Page(null, 3));
 		using var client = TestClient.Create(stub, o => o.BaseUrl = "https://threatstream.test/ts/");
 
 		await EnumerateAsync(client);
@@ -116,41 +133,20 @@ public class PagingTests
 	[InlineData("//evil.test/api/v1/probe/")]
 	[InlineData("http://threatstream.test/api/v1/probe/")]
 	[InlineData("https://threatstream.test:8443/api/v1/probe/")]
-	public async Task EnumerateAsync_RefusesALinkToAnotherOrigin(string next)
-	{
-		var stub = TestClient.Stub(Page(next, 1));
-		using var client = TestClient.Create(stub);
-
-		var act = () => EnumerateAsync(client);
-
-		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*outside the client's base address*");
-		stub.Calls.Should().ContainSingle();
-	}
+	public Task EnumerateAsync_RefusesALinkToAnotherOrigin(string next)
+		=> EnumerationShouldStopAsync(Pages(Page(next, 1)), "*outside the client's base address*", 1);
 
 	[Fact]
 	public async Task EnumerateAsync_FollowsAnAbsoluteLinkToTheSameOrigin()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, Page("https://THREATSTREAM.test/api/v1/probe/?offset=1", 1));
-		stub.Enqueue(HttpStatusCode.OK, Page(null, 2));
-		using var client = TestClient.Create(stub);
+		using var client = TestClient.Create(Pages(Page("https://THREATSTREAM.test/api/v1/probe/?offset=1", 1), Page(null, 2)));
 
 		(await EnumerateAsync(client)).Should().Equal(1, 2);
 	}
 
 	[Fact]
-	public async Task EnumerateAsync_RefusesARepeatedLink()
-	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
-		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 2));
-		using var client = TestClient.Create(stub);
-
-		var act = () => EnumerateAsync(client);
-
-		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*already followed*");
-		stub.Calls.Should().HaveCount(2);
-	}
+	public Task EnumerateAsync_RefusesARepeatedLink()
+		=> EnumerationShouldStopAsync(Pages(Page("/api/v1/probe/?offset=2", 1), Page("/api/v1/probe/?offset=2", 2)), "*already followed*", 2);
 
 	[Fact]
 	public async Task EnumerateAsync_ANextPageError_RaisesThreatStreamApiException()
@@ -164,17 +160,8 @@ public class PagingTests
 	}
 
 	[Fact]
-	public async Task EnumerateAsync_ANullNextPage_RaisesInvalidOperation()
-	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
-		stub.Enqueue(HttpStatusCode.OK, "null");
-		using var client = TestClient.Create(stub);
-
-		var act = () => EnumerateAsync(client);
-
-		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*empty page*");
-	}
+	public Task EnumerateAsync_ANullNextPage_RaisesInvalidOperation()
+		=> EnumerationShouldStopAsync(Pages(Page("/api/v1/probe/?offset=2", 1), "null"), "*empty page*", 2);
 
 	[Fact]
 	public async Task EnumerateAsync_RequiresAFirstPage()

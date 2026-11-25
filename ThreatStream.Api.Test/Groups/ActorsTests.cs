@@ -59,58 +59,54 @@ public class ActorsTests
 		page.Objects.Should().ContainSingle().Which.Id.Should().Be(223);
 	}
 
-	[Fact]
-	public async Task CreateAsync_SendsPostWithJsonBody()
+	private static async Task CreateShouldSendAsync(ActorCreateRequest request, string body)
 	{
-		var request = new ActorCreateRequest
-		{
-			Name = "test actor",
-			Tlp = Tlp.Red,
-			Tags = ["bad actor", "dummy tag"],
-			Victims = [13, 15],
-			PublicationStatus = ThreatModelPublicationStatus.Published
-		};
-
 		var call = await TestClient.CaptureAsync((client, ct) => client.Actors.CreateAsync(request, ct), ActorJson);
 
-		call.ShouldBe(HttpMethod.Post, "/api/v1/actor/", body: """{"name":"test actor","victims":[13,15],"tags":["bad actor","dummy tag"],"tlp":"red","publication_status":"published"}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/actor/", body: body);
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsEveryAttribute()
-	{
-		var request = new ActorCreateRequest
-		{
-			Name = "test actor",
-			Description = "d",
-			Tags = ["t"],
-			TagsV2 = [new ThreatStreamTag { Name = "p", Tlp = Tlp.Red }],
-			Tlp = Tlp.Green,
-			IsPublic = false,
-			Circles = [101],
-			PublicationStatus = ThreatModelPublicationStatus.New,
-			SourceCreated = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
-			SourceModified = new DateTimeOffset(2014, 10, 3, 20, 44, 35, TimeSpan.Zero),
-			Intelligence = [165546],
-			Signatures = [5],
-			Ttps = [63],
-			Aliases = "APT28",
-			IsTeam = true,
-			SophisticationType = 3,
-			SophisticationDescription = "s",
-			StartDate = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
-			Victims = [13],
-			Campaigns = [1062],
-			Incidents = [79]
-		};
+	public Task CreateAsync_SendsPostWithJsonBody()
+		=> CreateShouldSendAsync(
+			new ActorCreateRequest
+			{
+				Name = "test actor",
+				Tlp = Tlp.Red,
+				Tags = ["bad actor", "dummy tag"],
+				Victims = [13, 15],
+				PublicationStatus = ThreatModelPublicationStatus.Published
+			},
+			"""{"name":"test actor","victims":[13,15],"tags":["bad actor","dummy tag"],"tlp":"red","publication_status":"published"}""");
 
-		var call = await TestClient.CaptureAsync((client, ct) => client.Actors.CreateAsync(request, ct), ActorJson);
-
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/actor/",
-			body: """{"name":"test actor","aliases":"APT28","is_team":true,"soph_type":3,"soph_desc":"s","start_date":"2014-10-02T20:44:35Z","victims":[13],"campaigns":[1062],"incidents":[79],"description":"d","tags":["t"],"tags_v2":[{"name":"p","tlp":"red"}],"tlp":"green","is_public":false,"circles":[101],"publication_status":"new","source_created":"2014-10-02T20:44:35Z","source_modified":"2014-10-03T20:44:35Z","intelligence":[165546],"signatures":[5],"ttps":[63]}""");
-	}
+	[Fact]
+	public Task CreateAsync_SendsEveryAttribute()
+		=> CreateShouldSendAsync(
+			new ActorCreateRequest
+			{
+				Name = "test actor",
+				Description = "d",
+				Tags = ["t"],
+				TagsV2 = [new ThreatStreamTag { Name = "p", Tlp = Tlp.Red }],
+				Tlp = Tlp.Green,
+				IsPublic = false,
+				Circles = [101],
+				PublicationStatus = ThreatModelPublicationStatus.New,
+				SourceCreated = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
+				SourceModified = new DateTimeOffset(2014, 10, 3, 20, 44, 35, TimeSpan.Zero),
+				Intelligence = [165546],
+				Signatures = [5],
+				Ttps = [63],
+				Aliases = "APT28",
+				IsTeam = true,
+				SophisticationType = 3,
+				SophisticationDescription = "s",
+				StartDate = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
+				Victims = [13],
+				Campaigns = [1062],
+				Incidents = [79]
+			},
+			"""{"name":"test actor","aliases":"APT28","is_team":true,"soph_type":3,"soph_desc":"s","start_date":"2014-10-02T20:44:35Z","victims":[13],"campaigns":[1062],"incidents":[79],"description":"d","tags":["t"],"tags_v2":[{"name":"p","tlp":"red"}],"tlp":"green","is_public":false,"circles":[101],"publication_status":"new","source_created":"2014-10-02T20:44:35Z","source_modified":"2014-10-03T20:44:35Z","intelligence":[165546],"signatures":[5],"ttps":[63]}""");
 
 	[Fact]
 	public async Task GetAsync_SendsGet()

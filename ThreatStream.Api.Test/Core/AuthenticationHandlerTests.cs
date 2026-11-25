@@ -105,9 +105,7 @@ public partial class AuthenticationHandlerTests
 	[Fact]
 	public async Task OAuth_Unauthorized_WithAStreamBody_IsNotResent()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-1"));
-		stub.Enqueue(HttpStatusCode.Unauthorized);
+		var stub = TokenThenUnauthorizedStub();
 		using var client = OAuthClient(stub, new ManualTimeProvider());
 
 		using var response = await SendStreamAsync(client);
@@ -129,9 +127,7 @@ public partial class AuthenticationHandlerTests
 	[Fact]
 	public async Task OAuth_FailedRenewal_AfterUnauthorized_RaisesTheRenewalError()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-1"));
-		stub.Enqueue(HttpStatusCode.Unauthorized);
+		var stub = TokenThenUnauthorizedStub();
 		stub.Enqueue(HttpStatusCode.Unauthorized, """{"error":"client disabled"}""");
 		using var client = OAuthClient(stub, new ManualTimeProvider());
 
@@ -166,12 +162,19 @@ public partial class AuthenticationHandlerTests
 		logger.Messages.Should().NotContain(m => m.Contains("secret", StringComparison.Ordinal));
 	}
 
-	/// <summary>A token, a 401, a second token, then <paramref name="status"/> with <paramref name="body"/> for the resent request.</summary>
-	private static StubHandler RenewalStub(HttpStatusCode status, string body)
+	/// <summary>A token, then a 401 for the first request sent with it.</summary>
+	private static StubHandler TokenThenUnauthorizedStub()
 	{
 		var stub = new StubHandler();
 		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-1"));
 		stub.Enqueue(HttpStatusCode.Unauthorized);
+		return stub;
+	}
+
+	/// <summary>A token, a 401, a second token, then <paramref name="status"/> with <paramref name="body"/> for the resent request.</summary>
+	private static StubHandler RenewalStub(HttpStatusCode status, string body)
+	{
+		var stub = TokenThenUnauthorizedStub();
 		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-2"));
 		stub.Enqueue(status, body);
 		return stub;

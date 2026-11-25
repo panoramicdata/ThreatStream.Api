@@ -34,43 +34,43 @@ public partial class ThreatBulletinsTests
 	public Task ListAsync_SendsGetWithFilters()
 		=> ListShouldSendAsync((client, options, ct) => client.ThreatBulletins.ListAsync(options, ct), Type);
 
-	[Fact]
-	public async Task CreateAsync_SendsTheDocumentedExample()
+	private static async Task CreateShouldSendAsync(ThreatBulletinCreateRequest request, string body)
 	{
-		var request = new ThreatBulletinCreateRequest { Body = "this is a new threat bulletin", Name = "New Threat Bulletin" };
-
 		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatBulletins.CreateAsync(request, ct), ThreatBulletinJson);
 
-		call.ShouldBe(HttpMethod.Post, "/api/v1/tipreport/", body: """{"name":"New Threat Bulletin","body":"this is a new threat bulletin"}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/tipreport/", body: body);
+	}
+
+	private static async Task UpdateShouldSendAsync(ThreatBulletinUpdateRequest request, string body)
+	{
+		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatBulletins.UpdateAsync(11, request, ct), ThreatBulletinJson);
+
+		call.ShouldBe(HttpMethod.Patch, "/api/v1/tipreport/11/", body: body);
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsPrivateTags()
-	{
-		var request = new ThreatBulletinCreateRequest
-		{
-			Name = "New Threat Bulletin with Associations",
-			TagsV2 = [new ThreatStreamTag { Name = "my_private_tag", Tlp = Tlp.Red }]
-		};
+	public Task CreateAsync_SendsTheDocumentedExample()
+		=> CreateShouldSendAsync(
+			new ThreatBulletinCreateRequest { Body = "this is a new threat bulletin", Name = "New Threat Bulletin" },
+			"""{"name":"New Threat Bulletin","body":"this is a new threat bulletin"}""");
 
-		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatBulletins.CreateAsync(request, ct), ThreatBulletinJson);
-
-		call.ShouldBe(HttpMethod.Post, "/api/v1/tipreport/", body: """{"name":"New Threat Bulletin with Associations","tags_v2":[{"name":"my_private_tag","tlp":"red"}]}""");
-	}
+	[Fact]
+	public Task CreateAsync_SendsPrivateTags()
+		=> CreateShouldSendAsync(
+			new ThreatBulletinCreateRequest
+			{
+				Name = "New Threat Bulletin with Associations",
+				TagsV2 = [new ThreatStreamTag { Name = "my_private_tag", Tlp = Tlp.Red }]
+			},
+			"""{"name":"New Threat Bulletin with Associations","tags_v2":[{"name":"my_private_tag","tlp":"red"}]}""");
 
 	[Fact]
 	public Task GetAsync_SendsGet()
 		=> GetShouldSendAsync((client, id, options, ct) => client.ThreatBulletins.GetAsync(id, options, ct), Type, ThreatBulletinJson);
 
 	[Fact]
-	public async Task UpdateAsync_SendsTheDocumentedExample()
-	{
-		var request = new ThreatBulletinUpdateRequest { Name = "Updated Threat Bulletin Name" };
-
-		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatBulletins.UpdateAsync(11, request, ct), ThreatBulletinJson);
-
-		call.ShouldBe(HttpMethod.Patch, "/api/v1/tipreport/11/", body: """{"name":"Updated Threat Bulletin Name"}""");
-	}
+	public Task UpdateAsync_SendsTheDocumentedExample()
+		=> UpdateShouldSendAsync(new ThreatBulletinUpdateRequest { Name = "Updated Threat Bulletin Name" }, """{"name":"Updated Threat Bulletin Name"}""");
 
 	[Fact]
 	public Task ListAssociatedWithValueAsync_SendsTheValue()

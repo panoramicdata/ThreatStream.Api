@@ -25,47 +25,40 @@ public class IncidentsTests
 		call.ShouldBe(HttpMethod.Get, "/api/v1/incident/", "?limit=10");
 	}
 
-	[Fact]
-	public async Task CreateAsync_SendsPostWithJsonBody()
+	private static async Task CreateShouldSendAsync(IncidentCreateRequest request, string body)
 	{
-		var request = new IncidentCreateRequest
-		{
-			Name = "dummy test incident",
-			Tlp = Tlp.Red,
-			Tags = ["big incident", "dummy tag"],
-			Ttps = [63],
-			Status = 2,
-			StatusDescription = "this is an open incident"
-		};
-
 		var call = await TestClient.CaptureAsync((client, ct) => client.Incidents.CreateAsync(request, ct), IncidentJson);
 
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/incident/",
-			body: """{"name":"dummy test incident","status":2,"status_desc":"this is an open incident","tags":["big incident","dummy tag"],"tlp":"red","ttps":[63]}""");
+		call.ShouldBe(HttpMethod.Post, "/api/v1/incident/", body: body);
 	}
 
 	[Fact]
-	public async Task CreateAsync_SendsEveryOwnAttribute()
-	{
-		var request = new IncidentCreateRequest
-		{
-			Name = "i",
-			StartDate = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
-			EndDate = new DateTimeOffset(2014, 10, 9, 20, 44, 35, TimeSpan.Zero),
-			Victims = [13],
-			Actors = [223],
-			SandboxReports = [31]
-		};
+	public Task CreateAsync_SendsPostWithJsonBody()
+		=> CreateShouldSendAsync(
+			new IncidentCreateRequest
+			{
+				Name = "dummy test incident",
+				Tlp = Tlp.Red,
+				Tags = ["big incident", "dummy tag"],
+				Ttps = [63],
+				Status = 2,
+				StatusDescription = "this is an open incident"
+			},
+			"""{"name":"dummy test incident","status":2,"status_desc":"this is an open incident","tags":["big incident","dummy tag"],"tlp":"red","ttps":[63]}""");
 
-		var call = await TestClient.CaptureAsync((client, ct) => client.Incidents.CreateAsync(request, ct), IncidentJson);
-
-		call.ShouldBe(
-			HttpMethod.Post,
-			"/api/v1/incident/",
-			body: """{"name":"i","actors":[223],"victims":[13],"sandbox_reports":[31],"start_date":"2014-10-02T20:44:35Z","end_date":"2014-10-09T20:44:35Z"}""");
-	}
+	[Fact]
+	public Task CreateAsync_SendsEveryOwnAttribute()
+		=> CreateShouldSendAsync(
+			new IncidentCreateRequest
+			{
+				Name = "i",
+				StartDate = new DateTimeOffset(2014, 10, 2, 20, 44, 35, TimeSpan.Zero),
+				EndDate = new DateTimeOffset(2014, 10, 9, 20, 44, 35, TimeSpan.Zero),
+				Victims = [13],
+				Actors = [223],
+				SandboxReports = [31]
+			},
+			"""{"name":"i","actors":[223],"victims":[13],"sandbox_reports":[31],"start_date":"2014-10-02T20:44:35Z","end_date":"2014-10-09T20:44:35Z"}""");
 
 	[Fact]
 	public async Task GetAsync_SendsGet()
