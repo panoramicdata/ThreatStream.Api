@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![.NET 11.0](https://img.shields.io/badge/.NET-11.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![CI](https://github.com/panoramicdata/ThreatStream.Api/actions/workflows/ci.yml/badge.svg)](https://github.com/panoramicdata/ThreatStream.Api/actions/workflows/ci.yml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/CODACY_PROJECT_ID)](https://app.codacy.com/gh/panoramicdata/ThreatStream.Api/dashboard)
-[![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/CODACY_PROJECT_ID)](https://app.codacy.com/gh/panoramicdata/ThreatStream.Api/dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/0f466a662e1f45ecb45e619df03cbfce)](https://app.codacy.com/gh/panoramicdata/ThreatStream.Api/dashboard)
+[![Codacy Coverage](https://app.codacy.com/project/badge/Coverage/0f466a662e1f45ecb45e619df03cbfce)](https://app.codacy.com/gh/panoramicdata/ThreatStream.Api/dashboard)
 
 > **Need help with APIs or .NET?** Panoramic Data are experts in APIs and .NET, and we can help with your development. [Contact us](https://www.panoramicdata.com/contact-us) or see our [software services](https://www.panoramicdata.com/services/software).
 
