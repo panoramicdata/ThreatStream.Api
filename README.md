@@ -206,7 +206,7 @@ var submission = await client.SandboxSubmissions.SubmitAsync(new SandboxSubmitRe
 then downloads the result as text:
 
 ```csharp
-// Task<string> RunAsyncJobAsync(Func<CancellationToken, Task<GenericAsyncResult>> start, TimeSpan pollInterval, CancellationToken cancellationToken)
+// Task<string> RunAsyncJobAsync(Func<CancellationToken, Task<GenericAsyncResult?>> start, TimeSpan pollInterval, CancellationToken cancellationToken)
 var csvOrJson = await client.RunAsyncJobAsync(
 	ct => client.UserActions.StartReportAsync(options, ct),
 	pollInterval: TimeSpan.FromMinutes(1),   // the job endpoint is limited to one request a minute by default
