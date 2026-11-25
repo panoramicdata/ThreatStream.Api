@@ -72,8 +72,7 @@ public partial class ThreatBulletinsTests
 		var call = await TestClient.CaptureAsync((client, ct) => client.ThreatBulletins.AddAttachmentAsync(11, Attachment, ct), AttachmentJson);
 
 		call.ShouldBe(HttpMethod.Post, "/api/v1/tipreport/11/attachment/");
-		call.ContentType.Should().Be("multipart/form-data");
-		call.Parts.Select(p => (p.Name, p.FileName, p.ContentType, p.Text)).Should().Equal(
+		IntelligenceTestKit.PartsOf(call).Should().Equal(
 			("attachment", "report.pdf", "application/pdf", "%PDF-1.7"),
 			("filename", null, null, "report.pdf"));
 	}

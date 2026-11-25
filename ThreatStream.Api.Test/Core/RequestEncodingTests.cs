@@ -173,9 +173,7 @@ public class RequestEncodingTests
 				Ct);
 		}
 
-		var call = stub.Calls[0];
-		call.ContentType.Should().Be("multipart/form-data");
-		call.Parts.Select(p => (p.Name, p.FileName, p.ContentType, p.Text)).Should().Equal(
+		IntelligenceTestKit.PartsOf(stub.Calls[0]).Should().Equal(
 			("file", "iocs.csv", "text/csv", "value,itype\n1.2.3.4,c2_ip\n"),
 			("classification", null, null, "private"),
 			("confidence", null, null, "80"),

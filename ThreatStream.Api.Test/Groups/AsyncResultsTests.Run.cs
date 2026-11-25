@@ -48,6 +48,18 @@ public partial class AsyncResultsTests
 			(HttpMethod.Get, "/api/v1/generic_async_result/4242/get_result/"));
 	}
 
+	/// <summary>Runs the job <paramref name="start"/> begins against <paramref name="stub"/>, asserts that it fails after <paramref name="calls"/> requests, and returns the failure message.</summary>
+	private static async Task<string> RunShouldFailAsync(StubHandler stub, Func<ThreatStreamClient, CancellationToken, Task<GenericAsyncResult?>> start, int calls)
+	{
+		using var client = TestClient.Create(stub);
+
+		var act = () => client.RunAsyncJobAsync(ct => start(client, ct), TimeSpan.Zero, TestContext.Current.CancellationToken);
+
+		var thrown = await act.Should().ThrowAsync<InvalidOperationException>();
+		stub.Calls.Should().HaveCount(calls);
+		return thrown.Which.Message;
+	}
+
 	[Theory]
 	[InlineData(HttpStatusCode.Accepted)]
 	[InlineData(HttpStatusCode.NoContent)]
@@ -55,12 +67,10 @@ public partial class AsyncResultsTests
 	{
 		var stub = new StubHandler();
 		stub.Enqueue(status, string.Empty);
-		using var client = TestClient.Create(stub);
 
-		var act = () => client.RunAsyncJobAsync(ct => client.ApiUserActions.StartReportAsync(null, ct), TimeSpan.Zero, TestContext.Current.CancellationToken);
+		var message = await RunShouldFailAsync(stub, (client, ct) => client.ApiUserActions.StartReportAsync(null, ct), 1);
 
-		(await act.Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Contain("no asynchronous job was started");
-		stub.Calls.Should().ContainSingle();
+		message.Should().Contain("no asynchronous job was started");
 	}
 
 	[Fact]
@@ -82,13 +92,9 @@ public partial class AsyncResultsTests
 	[InlineData("inprogress", 400)]
 	public async Task RunAsyncJobAsync_FailedJob_Throws(string status, int? responseStatus)
 	{
-		var stub = Responses(JobJson, Job(status, responseStatus));
-		using var client = TestClient.Create(stub);
+		var message = await RunShouldFailAsync(Responses(JobJson, Job(status, responseStatus)), (client, ct) => client.UserActions.StartReportAsync(null, ct), 2);
 
-		var act = () => client.RunAsyncJobAsync(ct => client.UserActions.StartReportAsync(null, ct), TimeSpan.Zero, TestContext.Current.CancellationToken);
-
-		(await act.Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().StartWith("ThreatStream asynchronous job 4242 failed");
-		stub.Calls.Should().HaveCount(2);
+		message.Should().StartWith("ThreatStream asynchronous job 4242 failed");
 	}
 
 	[Fact]
