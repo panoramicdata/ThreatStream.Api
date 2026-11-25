@@ -12,7 +12,7 @@ public interface IObservableWorkgroups
 	/// </summary>
 	/// <param name="request">The observables and the workgroups to restrict them to.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The workgroups given and whether the restriction was applied.</returns>
+	/// <returns>The workgroups given and whether the restriction was applied, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>
 	/// <para>
 	/// <b>Side effect:</b> users outside the workgroups stop seeing the observables. Refused by a read-only client.
@@ -24,5 +24,5 @@ public interface IObservableWorkgroups
 	/// </para>
 	/// </remarks>
 	[Post("api/v2/intelligence/bulk_workgroups/")]
-	Task<BulkWorkgroupsResult> RestrictAsync([Body] BulkWorkgroupsRequest request, CancellationToken cancellationToken);
+	Task<BulkWorkgroupsResult?> RestrictAsync([Body] BulkWorkgroupsRequest request, CancellationToken cancellationToken);
 }

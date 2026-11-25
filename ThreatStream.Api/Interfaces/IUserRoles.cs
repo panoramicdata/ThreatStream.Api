@@ -29,13 +29,13 @@ public interface IUserRoles
 	/// </summary>
 	/// <param name="request">The role's name and permissions.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The new role.</returns>
+	/// <returns>The new role, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>
 	/// The reference's curl example for this operation posts to <c>/api/v1/orgadmin/</c>; its request table and the
 	/// rest of the page use <c>/api/v1/user_role/</c>, which is what this method sends.
 	/// </remarks>
 	[Post("api/v1/user_role/")]
-	Task<UserRole> CreateAsync([Body] UserRoleCreateRequest request, CancellationToken cancellationToken);
+	Task<UserRole?> CreateAsync([Body] UserRoleCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Lists the permissions that can be put in a custom role (<c>GET api/v1/user_role/permissions/</c>).</summary>
 	/// <param name="cancellationToken">A cancellation token.</param>
@@ -54,9 +54,9 @@ public interface IUserRoles
 	/// <param name="id">The role's ID.</param>
 	/// <param name="request">The changes.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated role.</returns>
+	/// <returns>The updated role, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/user_role/{id}/")]
-	Task<UserRole> UpdateAsync(long id, [Body] UserRoleUpdateRequest request, CancellationToken cancellationToken);
+	Task<UserRole?> UpdateAsync(long id, [Body] UserRoleUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Deletes a custom role (<c>DELETE api/v1/user_role/{id}/</c>). Org Admin only; system roles cannot be deleted.</summary>
 	/// <param name="id">The role's ID.</param>

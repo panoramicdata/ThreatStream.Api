@@ -23,10 +23,10 @@ public interface ISignatures
 	/// <summary>Creates a signature (<c>POST api/v1/signature/</c>).</summary>
 	/// <param name="request">The new signature, with a name unique within your organisation and its type's ID.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created signature.</returns>
+	/// <returns>The created signature, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Post("api/v1/signature/")]
-	Task<Signature> CreateAsync([Body] SignatureCreateRequest request, CancellationToken cancellationToken);
+	Task<Signature?> CreateAsync([Body] SignatureCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets a signature with its associations (<c>GET api/v1/signature/{id}/</c>).</summary>
 	/// <param name="id">The signature's ID.</param>
@@ -40,10 +40,10 @@ public interface ISignatures
 	/// <param name="id">The signature's ID.</param>
 	/// <param name="request">The fields to change; those left <see langword="null"/> are kept.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The changed signature.</returns>
+	/// <returns>The changed signature, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Patch("api/v1/signature/{id}/")]
-	Task<Signature> UpdateAsync(long id, [Body] SignatureUpdateRequest request, CancellationToken cancellationToken);
+	Task<Signature?> UpdateAsync(long id, [Body] SignatureUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Lists the signatures associated with an observable value (<c>GET api/v1/signature/associated_with_intelligence/?value=</c>).</summary>
 	/// <param name="value">The observable's value, such as <c>google.com</c>.</param>

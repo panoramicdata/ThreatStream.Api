@@ -53,12 +53,12 @@ public interface IObservables
 	/// </summary>
 	/// <param name="observableId">The observable's ID.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The import session the clone created (<c>202 Accepted</c>).</returns>
+	/// <returns>The import session the clone created (<c>202 Accepted</c>), or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>
 	/// Changes ThreatStream: it starts an import session, which must be approved (see
 	/// <see cref="IImportSessions.ApproveAllAsync"/>) before the clone becomes part of your intelligence. A read-only client
 	/// refuses it. The reference's example omits the <c>/api</c> prefix; the path here follows the rest of the API.
 	/// </remarks>
 	[Post("api/v2/intelligence/{observableId}/clone/")]
-	Task<ImportJob> CloneAsync(long observableId, CancellationToken cancellationToken);
+	Task<ImportJob?> CloneAsync(long observableId, CancellationToken cancellationToken);
 }

@@ -13,14 +13,14 @@ public interface ISandboxSubmissions
 	/// <summary>Submits a URL or file for detonation (<c>POST api/v1/submit/new/</c>, <c>multipart/form-data</c>).</summary>
 	/// <param name="request">The URL or file, and the sandbox to use.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>Where to follow each detonation started.</returns>
+	/// <returns>Where to follow each detonation started, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>
 	/// Changes ThreatStream, so a read-only client refuses it: it detonates the sample (using the organisation's sandbox
 	/// quota) and, unless <see cref="SandboxSubmitRequest.ImportIndicators"/> is <see langword="false"/>, imports the
 	/// observables found. The chosen sandbox needs an active integration, except the Anomali Sandbox.
 	/// </remarks>
 	[Post("api/v1/submit/new/")]
-	Task<SandboxSubmission> SubmitAsync([Body] SandboxSubmitRequest request, CancellationToken cancellationToken);
+	Task<SandboxSubmission?> SubmitAsync([Body] SandboxSubmitRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Searches your organisation's detonations (<c>GET api/v1/submit/search/</c>).</summary>
 	/// <param name="options">The keyword, and paging; <see langword="null"/> for the first 20.</param>

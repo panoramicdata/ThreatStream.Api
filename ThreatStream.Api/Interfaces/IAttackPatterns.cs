@@ -23,9 +23,9 @@ public interface IAttackPatterns
 	/// <summary>Creates an attack pattern (<c>POST api/v1/attackpattern/</c>). Changes ThreatStream: refused by a read-only client.</summary>
 	/// <param name="request">The new attack pattern; <see cref="AttackPatternCreateRequest.Name"/> is required.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created attack pattern.</returns>
+	/// <returns>The created attack pattern, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Post("api/v1/attackpattern/")]
-	Task<AttackPattern> CreateAsync([Body] AttackPatternCreateRequest request, CancellationToken cancellationToken);
+	Task<AttackPattern?> CreateAsync([Body] AttackPatternCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets an attack pattern's details, with up to 1000 associations (<c>GET api/v1/attackpattern/{id}/</c>).</summary>
 	/// <param name="id">The attack pattern's ID.</param>
@@ -39,9 +39,9 @@ public interface IAttackPatterns
 	/// <param name="id">The attack pattern's ID.</param>
 	/// <param name="request">The attributes to change; those left <see langword="null"/> are not sent.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated attack pattern.</returns>
+	/// <returns>The updated attack pattern, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/attackpattern/{id}/")]
-	Task<AttackPattern> UpdateAsync(long id, [Body] AttackPatternUpdateRequest request, CancellationToken cancellationToken);
+	Task<AttackPattern?> UpdateAsync(long id, [Body] AttackPatternUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Gets the attack patterns associated with an observable value (<c>GET api/v1/attackpattern/associated_with_intelligence/?value=</c>).

@@ -23,9 +23,9 @@ public interface IActors
 	/// <summary>Creates an actor (<c>POST api/v1/actor/</c>). Changes ThreatStream: refused by a read-only client.</summary>
 	/// <param name="request">The new actor; <see cref="ActorCreateRequest.Name"/> is required.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created actor.</returns>
+	/// <returns>The created actor, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Post("api/v1/actor/")]
-	Task<Actor> CreateAsync([Body] ActorCreateRequest request, CancellationToken cancellationToken);
+	Task<Actor?> CreateAsync([Body] ActorCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets an actor's details, with up to 1000 associations (<c>GET api/v1/actor/{id}/</c>).</summary>
 	/// <param name="id">The actor's ID.</param>
@@ -39,9 +39,9 @@ public interface IActors
 	/// <param name="id">The actor's ID.</param>
 	/// <param name="request">The attributes to change; those left <see langword="null"/> are not sent.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated actor.</returns>
+	/// <returns>The updated actor, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/actor/{id}/")]
-	Task<Actor> UpdateAsync(long id, [Body] ActorUpdateRequest request, CancellationToken cancellationToken);
+	Task<Actor?> UpdateAsync(long id, [Body] ActorUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Gets the actors associated with an observable value (<c>GET api/v1/actor/associated_with_intelligence/?value=</c>).

@@ -102,7 +102,7 @@ public class ObservableImportsTests
 	[Fact]
 	public async Task ImportAsync_MapsTheImportJob()
 	{
-		var job = await TestClient.ReadAsync((client, ct) => client.ObservableImports.ImportAsync(new ObservableImportRequest { DataText = "x" }, ct), ImportJobJson);
+		var job = (await TestClient.ReadAsync((client, ct) => client.ObservableImports.ImportAsync(new ObservableImportRequest { DataText = "x" }, ct), ImportJobJson))!;
 
 		job.JobId.Should().Be("6194c7c0-53ae-41fc-a6f0-dc3d174f02e2");
 		job.Success.Should().BeTrue();

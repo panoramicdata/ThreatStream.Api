@@ -23,9 +23,9 @@ public interface IIncidents
 	/// <summary>Creates an incident (<c>POST api/v1/incident/</c>). Changes ThreatStream: refused by a read-only client.</summary>
 	/// <param name="request">The new incident; <see cref="IncidentCreateRequest.Name"/> is required.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created incident.</returns>
+	/// <returns>The created incident, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Post("api/v1/incident/")]
-	Task<Incident> CreateAsync([Body] IncidentCreateRequest request, CancellationToken cancellationToken);
+	Task<Incident?> CreateAsync([Body] IncidentCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets an incident's details, with up to 1000 associations (<c>GET api/v1/incident/{id}/</c>).</summary>
 	/// <param name="id">The incident's ID.</param>
@@ -39,9 +39,9 @@ public interface IIncidents
 	/// <param name="id">The incident's ID.</param>
 	/// <param name="request">The attributes to change; those left <see langword="null"/> are not sent.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated incident.</returns>
+	/// <returns>The updated incident, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/incident/{id}/")]
-	Task<Incident> UpdateAsync(long id, [Body] IncidentUpdateRequest request, CancellationToken cancellationToken);
+	Task<Incident?> UpdateAsync(long id, [Body] IncidentUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Gets the incidents associated with an observable value (<c>GET api/v1/incident/associated_with_intelligence/?value=</c>).

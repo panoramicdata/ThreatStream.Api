@@ -139,9 +139,9 @@ public partial class ObservablesTests
 	[Fact]
 	public async Task CloneAsync_MapsTheImportJob()
 	{
-		var job = await TestClient.ReadAsync(
+		var job = (await TestClient.ReadAsync(
 			(client, ct) => client.Observables.CloneAsync(11202475, ct),
-			"""{"job_id": "368ab6dc-7955-4fd7-aef9-b8cd5496fcb1", "import_session_id": "346928"}""");
+			"""{"job_id": "368ab6dc-7955-4fd7-aef9-b8cd5496fcb1", "import_session_id": "346928"}"""))!;
 
 		job.JobId.Should().Be("368ab6dc-7955-4fd7-aef9-b8cd5496fcb1");
 		job.ImportSessionId.Should().Be(346928);

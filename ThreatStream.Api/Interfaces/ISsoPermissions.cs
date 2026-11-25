@@ -27,17 +27,17 @@ public interface ISsoPermissions
 	/// <summary>Maps a security group to roles (<c>POST api/v1/ssopermission/</c>). <b>Side effect:</b> the group's members gain the roles at their next sign-in.</summary>
 	/// <param name="request">The group, identity provider and roles.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The new mapping.</returns>
+	/// <returns>The new mapping, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Post("api/v1/ssopermission/")]
-	Task<SsoGroupMapping> CreateAsync([Body] SsoGroupMappingCreateRequest request, CancellationToken cancellationToken);
+	Task<SsoGroupMapping?> CreateAsync([Body] SsoGroupMappingCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Changes a mapping (<c>PATCH api/v1/ssopermission/{id}/</c>). <b>Side effect:</b> changes what the group's members may do.</summary>
 	/// <param name="id">The mapping's ID.</param>
 	/// <param name="request">The changes; the identity provider's ID is always required.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated mapping.</returns>
+	/// <returns>The updated mapping, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/ssopermission/{id}/")]
-	Task<SsoGroupMapping> UpdateAsync(long id, [Body] SsoGroupMappingUpdateRequest request, CancellationToken cancellationToken);
+	Task<SsoGroupMapping?> UpdateAsync(long id, [Body] SsoGroupMappingUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Deletes a mapping (<c>DELETE api/v1/ssopermission/{id}/</c>). <b>Side effect:</b> the group's members lose the mapped roles.</summary>
 	/// <param name="id">The mapping's ID.</param>

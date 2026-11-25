@@ -22,10 +22,10 @@ public interface ITtps
 	/// <summary>Creates a TTP (<c>POST api/v1/ttp/</c>).</summary>
 	/// <param name="request">The new TTP, with a name unique within your organisation.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created TTP.</returns>
+	/// <returns>The created TTP, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Post("api/v1/ttp/")]
-	Task<Ttp> CreateAsync([Body] TtpCreateRequest request, CancellationToken cancellationToken);
+	Task<Ttp?> CreateAsync([Body] TtpCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets a TTP with its associations (<c>GET api/v1/ttp/{id}/</c>).</summary>
 	/// <param name="id">The TTP's ID.</param>
@@ -39,10 +39,10 @@ public interface ITtps
 	/// <param name="id">The TTP's ID.</param>
 	/// <param name="request">The fields to change; those left <see langword="null"/> are kept.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The changed TTP.</returns>
+	/// <returns>The changed TTP, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Patch("api/v1/ttp/{id}/")]
-	Task<Ttp> UpdateAsync(long id, [Body] TtpUpdateRequest request, CancellationToken cancellationToken);
+	Task<Ttp?> UpdateAsync(long id, [Body] TtpUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Lists the TTPs associated with an observable value (<c>GET api/v1/ttp/associated_with_intelligence/?value=</c>).</summary>
 	/// <param name="value">The observable's value, such as <c>google.com</c>.</param>

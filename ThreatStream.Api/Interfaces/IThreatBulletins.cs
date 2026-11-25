@@ -22,10 +22,10 @@ public interface IThreatBulletins
 	/// <summary>Creates a threat bulletin (<c>POST api/v1/tipreport/</c>).</summary>
 	/// <param name="request">The new bulletin; its body may hold up to 100 MB of text.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created bulletin.</returns>
+	/// <returns>The created bulletin, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Post("api/v1/tipreport/")]
-	Task<ThreatBulletin> CreateAsync([Body] ThreatBulletinCreateRequest request, CancellationToken cancellationToken);
+	Task<ThreatBulletin?> CreateAsync([Body] ThreatBulletinCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets a threat bulletin with its associations (<c>GET api/v1/tipreport/{id}/</c>).</summary>
 	/// <param name="id">The bulletin's ID.</param>
@@ -39,10 +39,10 @@ public interface IThreatBulletins
 	/// <param name="id">The bulletin's ID.</param>
 	/// <param name="request">The fields to change; those left <see langword="null"/> are kept.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The changed bulletin.</returns>
+	/// <returns>The changed bulletin, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it. The body content type cannot be changed once set.</remarks>
 	[Patch("api/v1/tipreport/{id}/")]
-	Task<ThreatBulletin> UpdateAsync(long id, [Body] ThreatBulletinUpdateRequest request, CancellationToken cancellationToken);
+	Task<ThreatBulletin?> UpdateAsync(long id, [Body] ThreatBulletinUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Lists the threat bulletins associated with an observable value (<c>GET api/v1/tipreport/associated_with_intelligence/?value=</c>).</summary>
 	/// <param name="value">The observable's value, such as <c>google.com</c>.</param>
@@ -87,11 +87,11 @@ public interface IThreatBulletins
 	/// <param name="id">The bulletin's ID.</param>
 	/// <param name="request">The file and its name.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>ThreatStream's answer, which the reference does not document.</returns>
+	/// <returns>ThreatStream's answer, which the reference does not document, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>
 	/// Changes ThreatStream: a read-only client refuses it. The attachment is visible to every organisation that can see
 	/// the bulletin.
 	/// </remarks>
 	[Post("api/v1/tipreport/{id}/attachment/")]
-	Task<ThreatBulletinAttachment> AddAttachmentAsync(long id, [Body] ThreatBulletinAttachmentRequest request, CancellationToken cancellationToken);
+	Task<ThreatBulletinAttachment?> AddAttachmentAsync(long id, [Body] ThreatBulletinAttachmentRequest request, CancellationToken cancellationToken);
 }

@@ -23,9 +23,9 @@ public interface ICampaigns
 	/// <summary>Creates a campaign (<c>POST api/v1/campaign/</c>). Changes ThreatStream: refused by a read-only client.</summary>
 	/// <param name="request">The new campaign; <see cref="CampaignCreateRequest.Name"/> is required.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created campaign.</returns>
+	/// <returns>The created campaign, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Post("api/v1/campaign/")]
-	Task<Campaign> CreateAsync([Body] CampaignCreateRequest request, CancellationToken cancellationToken);
+	Task<Campaign?> CreateAsync([Body] CampaignCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets a campaign's details, with up to 1000 associations (<c>GET api/v1/campaign/{id}/</c>).</summary>
 	/// <param name="id">The campaign's ID.</param>
@@ -39,9 +39,9 @@ public interface ICampaigns
 	/// <param name="id">The campaign's ID.</param>
 	/// <param name="request">The attributes to change; those left <see langword="null"/> are not sent.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated campaign.</returns>
+	/// <returns>The updated campaign, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/campaign/{id}/")]
-	Task<Campaign> UpdateAsync(long id, [Body] CampaignUpdateRequest request, CancellationToken cancellationToken);
+	Task<Campaign?> UpdateAsync(long id, [Body] CampaignUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Gets the campaigns associated with an observable value (<c>GET api/v1/campaign/associated_with_intelligence/?value=</c>).

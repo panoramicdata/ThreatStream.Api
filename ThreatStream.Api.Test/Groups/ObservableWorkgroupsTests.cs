@@ -22,7 +22,7 @@ public class ObservableWorkgroupsTests
 	[Fact]
 	public async Task RestrictAsync_MapsEveryField()
 	{
-		var result = await TestClient.ReadAsync((client, ct) => client.ObservableWorkgroups.RestrictAsync(Request, ct), ResultJson);
+		var result = (await TestClient.ReadAsync((client, ct) => client.ObservableWorkgroups.RestrictAsync(Request, ct), ResultJson))!;
 
 		result.Workgroups.Should().Equal(2, 5);
 		result.Success.Should().BeTrue();

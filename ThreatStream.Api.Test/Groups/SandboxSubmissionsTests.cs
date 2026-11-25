@@ -101,7 +101,7 @@ public class SandboxSubmissionsTests
 	[Fact]
 	public async Task SubmitAsync_MapsTheReportLinks()
 	{
-		var submission = await TestClient.ReadAsync((client, ct) => client.SandboxSubmissions.SubmitAsync(UrlRequest(), ct), SubmissionJson);
+		var submission = (await TestClient.ReadAsync((client, ct) => client.SandboxSubmissions.SubmitAsync(UrlRequest(), ct), SubmissionJson))!;
 
 		submission.Success.Should().BeTrue();
 		var links = submission.Reports.Should().ContainSingle().Which;

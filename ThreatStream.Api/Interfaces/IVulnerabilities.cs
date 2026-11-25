@@ -22,10 +22,10 @@ public interface IVulnerabilities
 	/// <summary>Creates a vulnerability (<c>POST api/v1/vulnerability/</c>).</summary>
 	/// <param name="request">The new vulnerability, with a name unique within your organisation.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The created vulnerability.</returns>
+	/// <returns>The created vulnerability, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Post("api/v1/vulnerability/")]
-	Task<Vulnerability> CreateAsync([Body] VulnerabilityCreateRequest request, CancellationToken cancellationToken);
+	Task<Vulnerability?> CreateAsync([Body] VulnerabilityCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets a vulnerability with its associations (<c>GET api/v1/vulnerability/{id}/</c>).</summary>
 	/// <param name="id">The vulnerability's ID.</param>
@@ -39,10 +39,10 @@ public interface IVulnerabilities
 	/// <param name="id">The vulnerability's ID.</param>
 	/// <param name="request">The fields to change; those left <see langword="null"/> are kept.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The changed vulnerability.</returns>
+	/// <returns>The changed vulnerability, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	/// <remarks>Changes ThreatStream: a read-only client refuses it.</remarks>
 	[Patch("api/v1/vulnerability/{id}/")]
-	Task<Vulnerability> UpdateAsync(long id, [Body] VulnerabilityUpdateRequest request, CancellationToken cancellationToken);
+	Task<Vulnerability?> UpdateAsync(long id, [Body] VulnerabilityUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Lists the vulnerabilities associated with an observable value (<c>GET api/v1/vulnerability/associated_with_intelligence/?value=</c>).</summary>
 	/// <param name="value">The observable's value, such as <c>google.com</c>.</param>

@@ -50,9 +50,10 @@ internal static class UserAdministrationTestKit
 	public const string UsersPageJson = $$"""{"meta": {"limit": 20, "next": null, "offset": 0, "previous": null, "total_count": 1}, "objects": [{{UserJson}}]}""";
 
 	/// <summary>Asserts every modelled field of <see cref="UserJson"/>.</summary>
-	public static void ShouldBeTheExampleUser(this OrganizationUser user)
+	public static void ShouldBeTheExampleUser(this OrganizationUser? user)
 	{
-		user.UserId.Should().Be(725);
+		user.Should().NotBeNull();
+		user!.UserId.Should().Be(725);
 		user.ResourceUri.Should().Be("/api/v1/orgadmin/725/");
 		user.Email.Should().Be("test@example.com");
 		user.Name.Should().Be("Test");

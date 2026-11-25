@@ -20,10 +20,13 @@ public interface IObservableImports
 	/// </summary>
 	/// <param name="request">The data and the settings for its observables.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The import session created (<c>202 Accepted</c>); poll it with <see cref="IImportSessions.GetAsync"/>.</returns>
+	/// <returns>
+	/// The import session created (<c>202 Accepted</c>), or <see langword="null"/> when ThreatStream answers without a body;
+	/// poll the session with <see cref="IImportSessions.GetAsync"/>.
+	/// </returns>
 	/// <remarks>Changes ThreatStream. Rate limit: 90 imports an hour per organisation.</remarks>
 	[Post("api/v2/intelligence/import/")]
-	Task<ImportJob> ImportAsync([Body] ObservableImportRequest request, CancellationToken cancellationToken);
+	Task<ImportJob?> ImportAsync([Body] ObservableImportRequest request, CancellationToken cancellationToken);
 
 	/// <summary>
 	/// Imports observables directly, without an import session to approve (<c>PATCH api/v2/intelligence/</c>, JSON).

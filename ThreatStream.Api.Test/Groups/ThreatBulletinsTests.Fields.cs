@@ -85,7 +85,7 @@ public partial class ThreatBulletinsTests
 	[Fact]
 	public async Task AddAttachmentAsync_MapsTheResponse()
 	{
-		var attachment = await TestClient.ReadAsync((client, ct) => client.ThreatBulletins.AddAttachmentAsync(11, Attachment, ct), AttachmentJson);
+		var attachment = (await TestClient.ReadAsync((client, ct) => client.ThreatBulletins.AddAttachmentAsync(11, Attachment, ct), AttachmentJson))!;
 
 		attachment.Id.Should().Be(5);
 		attachment.FileName.Should().Be("report.pdf");

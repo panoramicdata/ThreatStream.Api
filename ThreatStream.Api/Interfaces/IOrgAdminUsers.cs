@@ -28,9 +28,9 @@ public interface IOrgAdminUsers
 	/// </summary>
 	/// <param name="request">The user's email address and what to grant.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The new user.</returns>
+	/// <returns>The new user, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Post("api/v1/orgadmin/")]
-	Task<OrganizationUser> CreateAsync([Body] OrganizationUserCreateRequest request, CancellationToken cancellationToken);
+	Task<OrganizationUser?> CreateAsync([Body] OrganizationUserCreateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Gets one user (<c>GET api/v1/orgadmin/{user_id}/</c>).</summary>
 	/// <param name="userId">The user's ID (<see cref="OrganizationUser.UserId"/>).</param>
@@ -47,9 +47,9 @@ public interface IOrgAdminUsers
 	/// <param name="userId">The user's ID.</param>
 	/// <param name="request">The changes.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The updated user.</returns>
+	/// <returns>The updated user, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Patch("api/v1/orgadmin/{userId}/")]
-	Task<OrganizationUser> UpdateAsync(long userId, [Body] OrganizationUserUpdateRequest request, CancellationToken cancellationToken);
+	Task<OrganizationUser?> UpdateAsync(long userId, [Body] OrganizationUserUpdateRequest request, CancellationToken cancellationToken);
 
 	/// <summary>Deletes a user from the organisation (<c>DELETE api/v1/orgadmin/{user_id}/</c>). <b>Side effect:</b> the account is removed.</summary>
 	/// <param name="userId">The user's ID.</param>
