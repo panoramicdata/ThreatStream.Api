@@ -1,4 +1,5 @@
 using ThreatStream.Api.Models;
+using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 using static ThreatStream.Api.Test.Support.ThreatModelsTestKit;
 
@@ -82,7 +83,7 @@ internal static class ThreatModelsBTestKit
 	}
 
 	/// <summary>Asserts the path and paging of an associated-observables list, and that it reads the observables.</summary>
-	public static async Task IntelligenceShouldSendAsync(Func<ThreatStreamClient, long, ListOptions?, CancellationToken, Task<ThreatStreamPage<ThreatModelObservable>>> intelligence, string type)
+	public static async Task IntelligenceShouldSendAsync(Func<ThreatStreamClient, long, ListOptions?, CancellationToken, Task<ThreatStreamPage<Observable>>> intelligence, string type)
 	{
 		var path = $"/api/v1/{type}/79/intelligence/";
 		(await TestClient.CaptureAsync((client, ct) => intelligence(client, 79, null, ct), IntelligencePage)).ShouldBe(HttpMethod.Get, path);

@@ -1,5 +1,6 @@
 using Refit;
 using ThreatStream.Api.Models;
+using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
@@ -87,5 +88,5 @@ public interface IIncidents
 	/// <returns>One page of observables.</returns>
 	/// <remarks>The reference spells the path <c>/ api/v1/incident/{id}/intelligence/</c>, with a stray space; this follows the other types.</remarks>
 	[Get("api/v1/incident/{id}/intelligence/")]
-	Task<ThreatStreamPage<ThreatModelObservable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 }

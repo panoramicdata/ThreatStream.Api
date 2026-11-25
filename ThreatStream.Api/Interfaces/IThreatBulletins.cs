@@ -1,5 +1,6 @@
 using Refit;
 using ThreatStream.Api.Models;
+using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
@@ -80,7 +81,7 @@ public interface IThreatBulletins
 	/// <returns>One page of observables.</returns>
 	/// <remarks>Observables associated through an import session may not be included; see <see cref="ThreatBulletin.ImportSessions"/>.</remarks>
 	[Get("api/v1/tipreport/{id}/intelligence/")]
-	Task<ThreatStreamPage<ThreatModelObservable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Attaches a file to a threat bulletin (<c>POST api/v1/tipreport/{id}/attachment/</c>, multipart).</summary>
 	/// <param name="id">The bulletin's ID.</param>

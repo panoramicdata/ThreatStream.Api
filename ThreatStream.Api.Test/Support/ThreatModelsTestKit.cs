@@ -1,5 +1,6 @@
 using System.Net;
 using ThreatStream.Api.Models;
+using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Test.Support;
@@ -123,14 +124,14 @@ internal static class ThreatModelsTestKit
 	}
 
 	/// <summary>Asserts every attribute of <see cref="ObservableJson"/>.</summary>
-	public static void ShouldBeTheExampleObservable(this ThreatStreamPage<ThreatModelObservable> page)
+	public static void ShouldBeTheExampleObservable(this ThreatStreamPage<Observable> page)
 	{
 		var observable = page.Objects.Should().ContainSingle().Subject;
 		observable.Id.Should().Be(165546);
 		observable.ResourceUri.Should().Be("/api/v2/intelligence/165546/");
 		observable.Value.Should().Be("bad.example");
 		observable.Type.Should().Be("domain");
-		observable.IType.Should().Be("mal_domain");
+		observable.Itype.Should().Be("mal_domain");
 		observable.ThreatType.Should().Be("malware");
 		observable.Status.Should().Be("active");
 		observable.Confidence.Should().Be(80);
@@ -138,7 +139,7 @@ internal static class ThreatModelsTestKit
 		observable.Tags.Should().ContainSingle().Which.Name.Should().Be("phishing");
 		observable.CreatedTs.Should().Be(new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero));
 		observable.ModifiedTs.Should().Be(new DateTimeOffset(2026, 1, 3, 3, 4, 5, TimeSpan.Zero));
-		observable.AdditionalProperties["source"].GetString().Should().Be("Example feed");
+		observable.Source.Should().Be("Example feed");
 	}
 
 	/// <summary>Asserts every attribute of a page holding one <see cref="LookupJson"/> value.</summary>

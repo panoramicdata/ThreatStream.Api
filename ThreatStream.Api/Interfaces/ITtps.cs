@@ -1,5 +1,6 @@
 using Refit;
 using ThreatStream.Api.Models;
+using ThreatStream.Api.Models.Intelligence;
 using ThreatStream.Api.Models.ThreatModels;
 
 namespace ThreatStream.Api.Interfaces;
@@ -79,5 +80,5 @@ public interface ITtps
 	/// <param name="cancellationToken">A cancellation token.</param>
 	/// <returns>One page of observables.</returns>
 	[Get("api/v1/ttp/{id}/intelligence/")]
-	Task<ThreatStreamPage<ThreatModelObservable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<Observable>> ListIntelligenceAsync(long id, [Query] ListOptions? options, CancellationToken cancellationToken);
 }
