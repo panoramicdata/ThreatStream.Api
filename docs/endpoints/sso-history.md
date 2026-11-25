@@ -6,4 +6,4 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/ssohistory/` |  |  |
+| GET | `/api/v1/ssohistory/` | `ISsoHistory.ListAsync` | `SsoHistoryTests.ListAsync_SendsGet` |
