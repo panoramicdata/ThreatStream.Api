@@ -6,7 +6,7 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/workgroup/` |  |  |
-| POST | `/api/v2/intelligence/bulk_workgroups/` |  |  |
+| GET | `/api/v1/workgroup/` | `IWorkgroups.ListAsync` | `WorkgroupsTests.ListAsync_SendsGet` |
+| POST | `/api/v2/intelligence/bulk_workgroups/` | `IObservableWorkgroups.RestrictAsync` | `ObservableWorkgroupsTests.RestrictAsync_PostsTheIdsAndWorkgroups` |
 | PATCH | `/api/v1/intelligence/{observable_id} (deprecated)` |  |  |
 | POST | `/api/v1/intelligence/import/ (deprecated)` |  |  |

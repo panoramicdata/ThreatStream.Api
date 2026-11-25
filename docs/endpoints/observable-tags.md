@@ -6,4 +6,4 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| POST | `/api/v2/intelligence/bulk_tagging/` |  |  |
+| POST | `/api/v2/intelligence/bulk_tagging/` | `IObservableTags.BulkTagAsync`, `IObservableTags.BulkTagMatchingAsync` | `ObservableTagsTests.BulkTagAsync_PostsTheIdsAndTags`, `ObservableTagsTests.BulkTagMatchingAsync_PostsTheQueryAsynchronously` |
