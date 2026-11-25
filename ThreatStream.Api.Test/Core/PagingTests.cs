@@ -1,0 +1,228 @@
+using System.Net;
+using ThreatStream.Api.Models;
+using ThreatStream.Api.Test.Support;
+
+namespace ThreatStream.Api.Test.Core;
+
+public class PagingTests
+{
+	private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
+	private static string Page(string? next, params int[] ids)
+		=> $$"""{"meta":{"limit":2,"offset":0,"next":{{(next is null ? "null" : $"\"{next}\"")}},"previous":null,"total_count":5,"took":12,"approximate_count":false},"objects":[{{string.Join(',', ids.Select(i => $$"""{"id":{{i}},"name":"o{{i}}","update_id":{{i * 10}},"resource_uri":"/api/v1/probe/{{i}}/"}"""))}}]}""";
+
+	private static async Task<List<long>> EnumerateAsync(ThreatStreamClient client, string first = "api/v1/probe/")
+	{
+		var probe = client.For<IProbe>();
+		var ids = new List<long>();
+		await foreach (var item in client.EnumerateAsync(ct => probe.GetAsync(first, ct), Ct))
+		{
+			ids.Add(item.Id);
+		}
+
+		return ids;
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_FollowsNextUntilTheLastPage()
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?limit=2&offset=2", 1, 2));
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?limit=2&offset=4", 3, 4));
+		stub.Enqueue(HttpStatusCode.OK, Page(null, 5));
+		using var client = TestClient.Create(stub);
+
+		var ids = await EnumerateAsync(client);
+
+		ids.Should().Equal(1, 2, 3, 4, 5);
+		stub.Calls.Select(c => c.Uri.PathAndQuery).Should().Equal("/api/v1/probe/", "/api/v1/probe/?limit=2&offset=2", "/api/v1/probe/?limit=2&offset=4");
+		stub.Calls.Should().AllSatisfy(c => c.Authorization.Should().Be(TestClient.ApiKeyAuthorization));
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_MapsTheMeta()
+	{
+		using var client = TestClient.Create(TestClient.Stub(Page(null, 1)));
+
+		var page = await client.For<IProbe>().GetAsync("api/v1/probe/", Ct);
+
+		page.Meta!.Limit.Should().Be(2);
+		page.Meta.Offset.Should().Be(0);
+		page.Meta.Next.Should().BeNull();
+		page.Meta.Previous.Should().BeNull();
+		page.Meta.TotalCount.Should().Be(5);
+		page.Meta.Took.Should().Be(12);
+		page.Meta.ApproximateCount.Should().BeFalse();
+		var item = page.Objects.Should().ContainSingle().Subject;
+		item.Name.Should().Be("o1");
+		item.UpdateId.Should().Be(10);
+		item.ResourceUri.Should().Be("/api/v1/probe/1/");
+	}
+
+	[Theory]
+	[InlineData("""{"objects":[{"id":1}]}""")]
+	[InlineData("""{"meta":{"next":""},"objects":[{"id":1}]}""")]
+	[InlineData("""{"meta":{"next":"/api/v1/probe/?offset=2"},"objects":[]}""")]
+	public async Task EnumerateAsync_StopsWithoutANextLinkOrObjects(string json)
+	{
+		var stub = TestClient.Stub(json);
+		using var client = TestClient.Create(stub);
+
+		var ids = await EnumerateAsync(client);
+
+		ids.Count.Should().BeLessThanOrEqualTo(1);
+		stub.Calls.Should().ContainSingle();
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_KeepsTheBaseAddressPathPrefix()
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
+		stub.Enqueue(HttpStatusCode.OK, Page("/ts/api/v1/probe/?offset=3", 2));
+		stub.Enqueue(HttpStatusCode.OK, Page(null, 3));
+		using var client = TestClient.Create(stub, o => o.BaseUrl = "https://threatstream.test/ts/");
+
+		await EnumerateAsync(client);
+
+		stub.Calls.Select(c => c.Uri.PathAndQuery).Should().Equal("/ts/api/v1/probe/", "/ts/api/v1/probe/?offset=2", "/ts/api/v1/probe/?offset=3");
+	}
+
+	[Theory]
+	[InlineData("https://evil.test/api/v1/probe/?offset=2")]
+	[InlineData("//evil.test/api/v1/probe/")]
+	[InlineData("http://threatstream.test/api/v1/probe/")]
+	[InlineData("https://threatstream.test:8443/api/v1/probe/")]
+	public async Task EnumerateAsync_RefusesALinkToAnotherOrigin(string next)
+	{
+		var stub = TestClient.Stub(Page(next, 1));
+		using var client = TestClient.Create(stub);
+
+		var act = () => EnumerateAsync(client);
+
+		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*outside the client's base address*");
+		stub.Calls.Should().ContainSingle();
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_FollowsAnAbsoluteLinkToTheSameOrigin()
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, Page("https://THREATSTREAM.test/api/v1/probe/?offset=1", 1));
+		stub.Enqueue(HttpStatusCode.OK, Page(null, 2));
+		using var client = TestClient.Create(stub);
+
+		(await EnumerateAsync(client)).Should().Equal(1, 2);
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_RefusesARepeatedLink()
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 2));
+		using var client = TestClient.Create(stub);
+
+		var act = () => EnumerateAsync(client);
+
+		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*already followed*");
+		stub.Calls.Should().HaveCount(2);
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_ANextPageError_RaisesThreatStreamApiException()
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
+		stub.Enqueue(HttpStatusCode.TooManyRequests, """{"error":"Rate limit exceeded"}""");
+		using var client = TestClient.Create(stub);
+
+		await TestClient.ShouldFailWithAsync(() => EnumerateAsync(client), HttpStatusCode.TooManyRequests, "Rate limit exceeded");
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_ANullNextPage_RaisesInvalidOperation()
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, Page("/api/v1/probe/?offset=2", 1));
+		stub.Enqueue(HttpStatusCode.OK, "null");
+		using var client = TestClient.Create(stub);
+
+		var act = () => EnumerateAsync(client);
+
+		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*empty page*");
+	}
+
+	[Fact]
+	public async Task EnumerateAsync_RequiresAFirstPage()
+	{
+		using var client = TestClient.Create(new StubHandler());
+
+		var act = async () =>
+		{
+			await foreach (var _ in client.EnumerateAsync<ProbeObject>(null!, Ct))
+			{
+			}
+		};
+
+		await act.Should().ThrowAsync<ArgumentNullException>();
+	}
+
+	private static ThreatStreamPage<ProbeObject> UpdatePage(params long[] updateIds)
+		=> new() { Objects = [.. updateIds.Select(u => new ProbeObject { Id = u, UpdateId = u })] };
+
+	private static async Task<(List<long> Seen, List<long> Requested)> ByUpdateIdAsync(Queue<ThreatStreamPage<ProbeObject>> pages, long after)
+	{
+		var requested = new List<long>();
+		var seen = new List<long>();
+		await foreach (var item in ThreatStreamClient.EnumerateByUpdateIdAsync(
+			(last, _) =>
+			{
+				requested.Add(last);
+				return Task.FromResult(pages.Dequeue());
+			},
+			o => o.UpdateId,
+			after,
+			Ct))
+		{
+			seen.Add(item.UpdateId);
+		}
+
+		return (seen, requested);
+	}
+
+	[Fact]
+	public async Task EnumerateByUpdateIdAsync_AdvancesByTheHighestUpdateId_UntilAnEmptyPage()
+	{
+		var pages = new Queue<ThreatStreamPage<ProbeObject>>([UpdatePage(11, 13, 12), UpdatePage(20), UpdatePage()]);
+
+		var (seen, requested) = await ByUpdateIdAsync(pages, 10);
+
+		seen.Should().Equal(11, 13, 12, 20);
+		requested.Should().Equal(10, 13, 20);
+	}
+
+	[Fact]
+	public async Task EnumerateByUpdateIdAsync_APageThatDoesNotAdvance_Throws()
+	{
+		var pages = new Queue<ThreatStreamPage<ProbeObject>>([UpdatePage(5), UpdatePage(5)]);
+
+		var act = () => ByUpdateIdAsync(pages, 0);
+
+		await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("The page after update_id 5 did not advance*");
+	}
+
+	[Fact]
+	public async Task EnumerateByUpdateIdAsync_RequiresItsDelegates()
+	{
+		var none = async (Func<long, CancellationToken, Task<ThreatStreamPage<ProbeObject>>>? getPage, Func<ProbeObject, long>? updateIdOf) =>
+		{
+			await foreach (var _ in ThreatStreamClient.EnumerateByUpdateIdAsync(getPage!, updateIdOf!, 0, Ct))
+			{
+			}
+		};
+
+		await none.Invoking(f => f(null, o => o.UpdateId)).Should().ThrowAsync<ArgumentNullException>();
+		await none.Invoking(f => f((_, _) => Task.FromResult(UpdatePage()), null)).Should().ThrowAsync<ArgumentNullException>();
+	}
+}

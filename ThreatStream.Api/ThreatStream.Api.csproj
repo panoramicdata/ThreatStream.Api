@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net11.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+		<!-- RF006: Refit's source generator falls back to the reflection request builder for some
+		     signatures. ThreatStreamClient creates its clients with RestService.For<T>(), which the diagnostic
+		     permits; this library is not trimmed or AOT-published. -->
+		<NoWarn>$(NoWarn);RF006</NoWarn>
+		<PackageId>ThreatStream.Api</PackageId>
+		<Owners>Panoramic Data Limited</Owners>
+		<PackageProjectUrl>https://github.com/panoramicdata/ThreatStream.Api</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/panoramicdata/ThreatStream.Api</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>Icon.png</PackageIcon>
+		<Description>A typed, modern .NET client for the Anomali ThreatStream REST API (v1 and v2): intelligence (observables), imports, threat model entities, enrichments, sandbox, snapshots, rules, whitelists, users and roles, with API key or OAuth 2.0 authentication, paging helpers and rate-limit aware retries.</Description>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageTags>ThreatStream;Anomali;ThreatIntelligence;CTI;IOC;Observables;REST;PanoramicData</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
+		<PackageReference Include="Refit" />
+		<PackageReference Include="Refit.Reflection" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Icon.png" Pack="true" PackagePath="" />
+		<None Include="..\README.md" Link="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="ThreatStream.Api.Test" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,12 @@
+# intelligence endpoints
+
+Source: https://docs.anomali.com/Content/ThreatStream%20API/supported_endpoints.htm
+
+Paths include the `/api/vN/` prefix and are relative to the base URL. One row per operation. `Client method` is `IInterface.Method`; `Test` is `TestClass.TestMethod`. Deprecated operations are marked and not implemented.
+
+| Method | Path | Client method | Test |
+|---|---|---|---|
+| GET | `/api/v2/intelligence/` |  |  |
+| GET | `/api/v1/search_filter/` |  |  |
+| POST | `/api/v2/intelligence/{observable_id}/clone/` |  |  |
+| GET | `/api/v2/intelligence/associated_with_intelligence/` |  |  |
