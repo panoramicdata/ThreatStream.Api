@@ -53,7 +53,7 @@ internal static class UserAdministrationTestKit
 	public static void ShouldBeTheExampleUser(this OrganizationUser? user)
 	{
 		user.Should().NotBeNull();
-		user!.UserId.Should().Be(725);
+		user.UserId.Should().Be(725);
 		user.ResourceUri.Should().Be("/api/v1/orgadmin/725/");
 		user.Email.Should().Be("test@example.com");
 		user.Name.Should().Be("Test");

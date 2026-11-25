@@ -56,7 +56,7 @@ internal static class UsersRolesTestKit
 	public static void ShouldBeTheExampleRole(this UserRole? role)
 	{
 		role.Should().NotBeNull();
-		role!.Id.Should().Be(3011);
+		role.Id.Should().Be(3011);
 		role.ResourceUri.Should().Be("/api/v1/user_role/3011/");
 		role.Name.Should().Be("rule_intel_creator");
 		role.Type.Should().Be(UserRoleType.User);
@@ -71,7 +71,7 @@ internal static class UsersRolesTestKit
 	public static void ShouldBeTheExampleMapping(this SsoGroupMapping? mapping)
 	{
 		mapping.Should().NotBeNull();
-		mapping!.Id.Should().Be(1692);
+		mapping.Id.Should().Be(1692);
 		mapping.ResourceUri.Should().Be("/api/v1/ssopermission/1692/");
 		mapping.Group.Should().Be("8x9x9f9t9w9sdf9pspdfg");
 		mapping.IdentityProvider.Should().Be("/api/v1/identity-provider/112/");

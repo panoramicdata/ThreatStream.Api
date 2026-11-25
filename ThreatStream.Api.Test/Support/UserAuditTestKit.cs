@@ -66,7 +66,7 @@ internal static class UserAuditTestKit
 	public static void ShouldBeTheExampleJob(this GenericAsyncResult? job)
 	{
 		job.Should().NotBeNull();
-		job!.Id.Should().Be(4242);
+		job.Id.Should().Be(4242);
 		job.ResourceUri.Should().Be("/api/v1/generic_async_result/4242/");
 		job.Status.Should().Be("inprogress");
 		job.ResponseStatus.Should().BeNull();
