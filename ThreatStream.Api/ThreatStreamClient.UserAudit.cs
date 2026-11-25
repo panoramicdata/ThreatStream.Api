@@ -1,5 +1,5 @@
 using ThreatStream.Api.Interfaces;
-using ThreatStream.Api.Models.UserAudit;
+using ThreatStream.Api.Models;
 
 namespace ThreatStream.Api;
 
@@ -19,23 +19,24 @@ public sealed partial class ThreatStreamClient
 	/// <paramref name="pollInterval"/> until it is <c>done</c>, then downloads its result
 	/// (<c>GET api/v1/generic_async_result/{id}/get_result/</c>).
 	/// </summary>
-	/// <param name="start">Starts the job, for example
-	/// <c>ct =&gt; client.UserActions.StartReportAsync(options, ct)</c>.</param>
+	/// <param name="start">Starts the job, for example <c>ct =&gt; client.UserActions.StartReportAsync(options, ct)</c> or
+	/// <c>ct =&gt; client.ObservableTags.BulkTagMatchingAsync(request, ct)</c>.</param>
 	/// <param name="pollInterval">How long to wait between polls. The job endpoint has no documented rate limit, so
 	/// ThreatStream's default of one request per minute per user applies: a minute is a sensible interval.</param>
 	/// <param name="cancellationToken">Cancels the wait; give it a timeout to bound how long a job may run.</param>
 	/// <returns>The job's result as text: CSV or JSON for a user activity report.</returns>
-	/// <exception cref="InvalidOperationException">The job failed: its status is <c>failed</c> or <c>error</c>, or its
-	/// response status is 400 or higher.</exception>
+	/// <exception cref="InvalidOperationException">ThreatStream started no job (it answered without a body), or the job
+	/// failed: its status is <c>failed</c> or <c>error</c>, or its response status is 400 or higher.</exception>
 	/// <remarks>Any status other than <c>done</c>, <c>failed</c> or <c>error</c> (such as <c>inprogress</c>) is polled again.</remarks>
 	public async Task<string> RunAsyncJobAsync(
-		Func<CancellationToken, Task<GenericAsyncResult>> start,
+		Func<CancellationToken, Task<GenericAsyncResult?>> start,
 		TimeSpan pollInterval,
 		CancellationToken cancellationToken)
 	{
 		ArgumentNullException.ThrowIfNull(start);
 		ArgumentOutOfRangeException.ThrowIfLessThan(pollInterval, TimeSpan.Zero);
-		var job = await start(cancellationToken).ConfigureAwait(false);
+		var job = await start(cancellationToken).ConfigureAwait(false)
+			?? throw new InvalidOperationException("ThreatStream answered without a body, so no asynchronous job was started.");
 		while (!IsFinished(job))
 		{
 			await Task.Delay(pollInterval, cancellationToken).ConfigureAwait(false);

@@ -1,4 +1,5 @@
 using Refit;
+using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.UserAudit;
 
 namespace ThreatStream.Api.Interfaces;
@@ -20,9 +21,9 @@ public interface IApiUserActions
 	/// </summary>
 	/// <param name="options">The time range, users, format and record limit, or <see langword="null"/> for ThreatStream's defaults.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The job, typically with status <c>inprogress</c>.</returns>
+	/// <returns>The job, typically with status <c>inprogress</c>, or <see langword="null"/> when ThreatStream answers without a body.</returns>
 	[Get("api/v1/apiuseraction/?async_result=true")]
-	Task<GenericAsyncResult> StartReportAsync([Query] UserActivityReportOptions? options, CancellationToken cancellationToken);
+	Task<GenericAsyncResult?> StartReportAsync([Query] UserActivityReportOptions? options, CancellationToken cancellationToken);
 
 	/// <summary>Generates an API activity report and returns it in the same response (<c>GET api/v1/apiuseraction/</c>).</summary>
 	/// <param name="options">The time range, users, format and record limit, or <see langword="null"/> for ThreatStream's defaults.</param>

@@ -1,4 +1,6 @@
-using ThreatStream.Api.Models.UserAudit;
+using System.Net;
+using ThreatStream.Api.Models;
+using ThreatStream.Api.Models.ObservableTags;
 using ThreatStream.Api.Test.Support;
 using static ThreatStream.Api.Test.Support.UserAuditTestKit;
 
@@ -24,6 +26,37 @@ public partial class AsyncResultsTests
 			"/api/v1/generic_async_result/4242/",
 			"/api/v1/generic_async_result/4242/",
 			"/api/v1/generic_async_result/4242/get_result/");
+	}
+
+	[Fact]
+	public async Task RunAsyncJobAsync_DrivesABulkTaggingJob()
+	{
+		var request = new ObservableTagQueryRequest { Query = new ObservableTagQuery { Q = "itype = mal_ip" } };
+		var stub = Responses(Job("inprogress"), Job("done", 200), "{}");
+		using var client = TestClient.Create(stub);
+
+		var result = await client.RunAsyncJobAsync(ct => client.ObservableTags.BulkTagMatchingAsync(request, ct), TimeSpan.Zero, TestContext.Current.CancellationToken);
+
+		result.Should().Be("{}");
+		stub.Calls.Select(c => (c.Method, c.Uri.PathAndQuery)).Should().Equal(
+			(HttpMethod.Post, "/api/v2/intelligence/bulk_tagging/?async_result=true"),
+			(HttpMethod.Get, "/api/v1/generic_async_result/4242/"),
+			(HttpMethod.Get, "/api/v1/generic_async_result/4242/get_result/"));
+	}
+
+	[Theory]
+	[InlineData(HttpStatusCode.Accepted)]
+	[InlineData(HttpStatusCode.NoContent)]
+	public async Task RunAsyncJobAsync_NoJobStarted_Throws(HttpStatusCode status)
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(status, string.Empty);
+		using var client = TestClient.Create(stub);
+
+		var act = () => client.RunAsyncJobAsync(ct => client.ApiUserActions.StartReportAsync(null, ct), TimeSpan.Zero, TestContext.Current.CancellationToken);
+
+		(await act.Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Contain("no asynchronous job was started");
+		stub.Calls.Should().ContainSingle();
 	}
 
 	[Fact]
@@ -79,7 +112,7 @@ public partial class AsyncResultsTests
 	public async Task RunAsyncJobAsync_RejectsBadArguments()
 	{
 		using var client = TestClient.Create(new StubHandler());
-		Task<GenericAsyncResult> start(CancellationToken ct) => client.AsyncResults.GetAsync(1, ct);
+		Task<GenericAsyncResult?> start(CancellationToken ct) => client.UserActions.StartReportAsync(null, ct);
 
 		var noStart = () => client.RunAsyncJobAsync(null!, TimeSpan.Zero, TestContext.Current.CancellationToken);
 		var negative = () => client.RunAsyncJobAsync(start, TimeSpan.FromSeconds(-1), TestContext.Current.CancellationToken);

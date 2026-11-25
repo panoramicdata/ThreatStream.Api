@@ -1,4 +1,5 @@
 using System.Net;
+using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.UserAudit;
 
 namespace ThreatStream.Api.Test.Support;
@@ -62,9 +63,10 @@ internal static class UserAuditTestKit
 	}
 
 	/// <summary>Asserts every modelled field of <see cref="JobJson"/>.</summary>
-	public static void ShouldBeTheExampleJob(this GenericAsyncResult job)
+	public static void ShouldBeTheExampleJob(this GenericAsyncResult? job)
 	{
-		job.Id.Should().Be(4242);
+		job.Should().NotBeNull();
+		job!.Id.Should().Be(4242);
 		job.ResourceUri.Should().Be("/api/v1/generic_async_result/4242/");
 		job.Status.Should().Be("inprogress");
 		job.ResponseStatus.Should().BeNull();

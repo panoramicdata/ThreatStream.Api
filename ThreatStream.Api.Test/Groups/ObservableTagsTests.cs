@@ -76,7 +76,7 @@ public class ObservableTagsTests
 	[Fact]
 	public async Task BulkTagMatchingAsync_MapsEveryField()
 	{
-		var job = await TestClient.ReadAsync((client, ct) => client.ObservableTags.BulkTagMatchingAsync(QueryExample, ct), JobJson);
+		var job = (await TestClient.ReadAsync((client, ct) => client.ObservableTags.BulkTagMatchingAsync(QueryExample, ct), JobJson))!;
 
 		job.Id.Should().Be(3001);
 		job.ResourceUri.Should().Be("/api/v1/generic_async_result/3001/");
@@ -90,9 +90,9 @@ public class ObservableTagsTests
 	[Fact]
 	public async Task BulkTagMatchingAsync_MapsAFinishedJob()
 	{
-		var job = await TestClient.ReadAsync(
+		var job = (await TestClient.ReadAsync(
 			(client, ct) => client.ObservableTags.BulkTagMatchingAsync(QueryExample, ct),
-			"""{"id": 3001, "response_status": "200", "status": "done"}""");
+			"""{"id": 3001, "response_status": "200", "status": "done"}"""))!;
 
 		job.Status.Should().Be("done");
 		job.ResponseStatus.Should().Be(200);

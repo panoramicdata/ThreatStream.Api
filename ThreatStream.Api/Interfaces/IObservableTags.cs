@@ -1,4 +1,5 @@
 using Refit;
+using ThreatStream.Api.Models;
 using ThreatStream.Api.Models.ObservableTags;
 
 namespace ThreatStream.Api.Interfaces;
@@ -33,12 +34,16 @@ public interface IObservableTags
 	/// </summary>
 	/// <param name="request">The query selecting the observables, and the tags to add and remove.</param>
 	/// <param name="cancellationToken">A cancellation token.</param>
-	/// <returns>The job, to poll until it is done.</returns>
+	/// <returns>
+	/// The job, or <see langword="null"/> when ThreatStream answers without a body. Poll it and fetch its result (which
+	/// finishes the job) with <see cref="IAsyncResults"/>, or pass this method to
+	/// <see cref="ThreatStreamClient.RunAsyncJobAsync"/>.
+	/// </returns>
 	/// <remarks>
 	/// <b>Side effect:</b> changes the tags of every observable the query selects. Refused by a read-only client. An
 	/// organization can run one such job at a time: starting another while one runs fails. The reference spells the job's
 	/// <c>resource_uri</c> <c>/api/vl/...</c>; ThreatStream's path is <c>/api/v1/generic_async_result/{id}/</c>.
 	/// </remarks>
 	[Post("api/v2/intelligence/bulk_tagging/?async_result=true")]
-	Task<BulkTaggingJob> BulkTagMatchingAsync([Body] ObservableTagQueryRequest request, CancellationToken cancellationToken);
+	Task<GenericAsyncResult?> BulkTagMatchingAsync([Body] ObservableTagQueryRequest request, CancellationToken cancellationToken);
 }

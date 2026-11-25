@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
 
-namespace ThreatStream.Api.Models.UserAudit;
+namespace ThreatStream.Api.Models;
 
 /// <summary>
-/// An asynchronous ThreatStream job (<c>api/v1/generic_async_result/{id}/</c>), such as a user activity report or an
-/// asynchronous bulk tagging request. Poll it until <see cref="Status"/> is <c>done</c>, then download the result.
+/// An asynchronous ThreatStream job (<c>api/v1/generic_async_result/{id}/</c>), such as a user activity report or a
+/// query-based bulk tagging request. Poll it with <see cref="Interfaces.IAsyncResults.GetAsync"/> until
+/// <see cref="Status"/> is <c>done</c>, then fetch its result with <see cref="Interfaces.IAsyncResults.GetResultAsync"/>,
+/// or let <see cref="ThreatStreamClient.RunAsyncJobAsync"/> do both.
 /// </summary>
 public sealed class GenericAsyncResult : ThreatStreamResource
 {
@@ -16,7 +18,10 @@ public sealed class GenericAsyncResult : ThreatStreamResource
 	[JsonPropertyName("response_status")]
 	public int? ResponseStatus { get; init; }
 
-	/// <summary>The API path that started the job (<c>path</c>), such as <c>/api/v1/useraction/</c>.</summary>
+	/// <summary>
+	/// The API path that started the job (<c>path</c>), such as <c>/api/v1/useraction/</c> or
+	/// <c>/api/v2/intelligence/bulk_tagging/</c>.
+	/// </summary>
 	[JsonPropertyName("path")]
 	public string? Path { get; init; }
 
