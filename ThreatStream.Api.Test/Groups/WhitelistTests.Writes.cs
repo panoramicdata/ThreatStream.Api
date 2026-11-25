@@ -52,7 +52,7 @@ public partial class WhitelistTests
 	{
 		var call = await TestClient.CaptureAsync((client, ct) => client.Whitelist.UploadAsync(UploadExample, removeExisting, ct), "{}");
 
-		call.ShouldMatch(HttpMethod.Post, "/api/v1/orgwhitelist/upload/", removeExisting ? "?remove_existing=true" : "?remove_existing=false", null);
+		call.ShouldBe(HttpMethod.Post, "/api/v1/orgwhitelist/upload/", removeExisting ? "?remove_existing=true" : "?remove_existing=false");
 		call.ContentType.Should().Be("multipart/form-data");
 		var part = call.Parts.Should().ContainSingle().Subject;
 		part.Name.Should().Be("file");
