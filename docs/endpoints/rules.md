@@ -6,7 +6,7 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| GET | `/api/v1/rule/` |  |  |
-| POST | `/api/v1/rule/` |  |  |
-| PATCH | `/api/v1/rule/` |  |  |
-| DELETE | `/api/v1/rule/` |  |  |
+| GET | `/api/v1/rule/` | `IRules.ListAsync` | `RulesTests.ListAsync_SendsGet` |
+| POST | `/api/v1/rule/` | `IRules.CreateAsync` | `RulesTests.CreateAsync_PostsTheRule` |
+| PATCH | `/api/v1/rule/{id}/` | `IRules.UpdateAsync` | `RulesTests.UpdateAsync_PatchesTheRule` |
+| DELETE | `/api/v1/rule/` | `IRules.DeleteAsync` | `RulesTests.DeleteAsync_SendsDeleteWithAnIdFilter` |
