@@ -9,7 +9,11 @@ namespace ThreatStream.Api.Test.Groups;
 public partial class AsyncResultsTests
 {
 	private static string Job(string? status, int? responseStatus = null)
-		=> $$"""{"id": 4242, "status": {{(status is null ? "null" : $"\"{status}\"")}}, "response_status": {{(responseStatus?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null")}}}""";
+	{
+		var statusJson = status is null ? "null" : "\"" + status + "\"";
+		var responseStatusJson = responseStatus?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null";
+		return "{\"id\": 4242, \"status\": " + statusJson + ", \"response_status\": " + responseStatusJson + "}";
+	}
 
 	[Fact]
 	public async Task RunAsyncJobAsync_PollsUntilDone_ThenDownloads()

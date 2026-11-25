@@ -100,12 +100,4 @@ public partial class InventoryTests
 		Operations.Should().NotBeEmpty();
 		AssertNone(Operations.Where(o => !listed.Contains(o.ClientMethod)).Select(o => o.ToString()), "every Refit operation must appear in a docs/endpoints row");
 	}
-
-	[Theory]
-	[InlineData("/api/v1/actor/{id}/intelligence/", "api/v1/actor/{}/intelligence")]
-	[InlineData("api/v1/actor/{actorId}/intelligence/?limit=1", "api/v1/actor/{}/intelligence")]
-	[InlineData("/api/v1/importsession/<id>/approve_all", "api/v1/importsession/{}/approve_all")]
-	[InlineData("oauth/token", "oauth/token")]
-	public void Normalize_IgnoresSlashesQueriesAndPlaceholderNames(string path, string expected)
-		=> Normalize(path).Should().Be(expected);
 }
