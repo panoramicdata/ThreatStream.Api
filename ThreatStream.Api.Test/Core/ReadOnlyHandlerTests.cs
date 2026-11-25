@@ -80,6 +80,17 @@ public class ReadOnlyHandlerTests
 	}
 
 	[Fact]
+	public async Task Allows_AGetOutsideTheBaseAddress()
+	{
+		using var harness = new HandlerHarness(new ReadOnlyHandler(new Uri(Base)));
+		harness.Stub.Enqueue(HttpStatusCode.OK);
+
+		using var response = await harness.SendAsync(HttpMethod.Get, "https://other.test/api/v1/alfred/report/");
+
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
+	}
+
+	[Fact]
 	public async Task Client_IsReadOnly_RefusesBeforeSending()
 	{
 		var stub = new StubHandler();

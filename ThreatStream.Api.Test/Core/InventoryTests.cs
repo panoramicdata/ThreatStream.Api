@@ -12,10 +12,10 @@ namespace ThreatStream.Api.Test.Core;
 public partial class InventoryTests
 {
 	/// <summary>The rows in docs/endpoints, deprecated ones included.</summary>
-	private const int DocumentedRows = 139;
+	private const int DocumentedRows = 136;
 
 	/// <summary>The non-deprecated rows, each of which must be implemented once its category leaves pending-categories.txt.</summary>
-	private const int DocumentedOperations = 137;
+	private const int DocumentedOperations = 134;
 
 	private static readonly string RepoRoot = FindRepoRoot();
 	private static readonly List<Row> Rows = ParseRows();

@@ -1,22 +1,2 @@
 # Categories (docs/endpoints/<name>.md) still being implemented. InventoryTests requires every
 # non-deprecated row of any category NOT listed here to name a client method and a test.
-appstorehistory
-associations
-enrichments
-feed
-import
-intelligence
-observable-tags
-report
-rules
-sandbox
-snapshot
-sso-history
-threat-model-search
-threat-model-tags
-threat-model
-user-administration
-user-audit
-users-roles
-whitelist
-workgroup
