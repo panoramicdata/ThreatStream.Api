@@ -11,7 +11,8 @@ namespace ThreatStream.Api;
 /// often arrive as strings (sometimes empty), and timestamps as ISO 8601 text without an offset (UTC) or as epoch seconds.
 /// These options read all of those forms, map unrecognised enum names to the enum's default (<c>Unknown</c>) value, read
 /// numbers and booleans into string properties as their text, and write <see cref="DateTimeOffset"/> values as UTC.
-/// A JSON <c>null</c> for a collection property keeps the property's initial value (typically <c>[]</c>). Property names
+/// Tag lists read both plain names and tag objects. A JSON <c>null</c> for a collection property keeps the property's
+/// initial value (typically <c>[]</c>). Property names
 /// not given by <see cref="JsonPropertyNameAttribute"/> are snake_case.
 /// </remarks>
 public static class ThreatStreamJson
@@ -46,6 +47,7 @@ public static class ThreatStreamJson
 		options.Converters.Add(new TolerantNullableDoubleConverter());
 		options.Converters.Add(new TolerantDateTimeOffsetConverter());
 		options.Converters.Add(new TolerantEnumConverterFactory());
+		options.Converters.Add(new TolerantTagListConverter());
 		// Shared and static: lock it so no caller can change serialization for every client.
 		options.MakeReadOnly();
 		return options;

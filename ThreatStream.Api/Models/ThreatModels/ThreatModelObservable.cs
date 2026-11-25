@@ -41,7 +41,6 @@ public sealed class ThreatModelObservable : ThreatStreamResource
 
 	/// <summary>The observable's tags (<c>tags</c>).</summary>
 	[JsonPropertyName("tags")]
-	[JsonConverter(typeof(ThreatModelTagListConverter))]
 	public IReadOnlyList<ThreatStreamTag> Tags { get; init; } = [];
 
 	/// <summary>When the observable was created on ThreatStream (<c>created_ts</c>).</summary>

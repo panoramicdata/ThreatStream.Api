@@ -23,12 +23,10 @@ public abstract class ThreatModelEntity : ThreatStreamResource
 
 	/// <summary>The entity's tags (<c>tags</c>), sent as plain names or as tag objects.</summary>
 	[JsonPropertyName("tags")]
-	[JsonConverter(typeof(ThreatModelTagListConverter))]
 	public IReadOnlyList<ThreatStreamTag> Tags { get; init; } = [];
 
 	/// <summary>The entity's tags with their TLP and owning organisation (<c>tags_v2</c>).</summary>
 	[JsonPropertyName("tags_v2")]
-	[JsonConverter(typeof(ThreatModelTagListConverter))]
 	public IReadOnlyList<ThreatStreamTag> TagsV2 { get; init; } = [];
 
 	/// <summary>The entity's Traffic Light Protocol designation (<c>tlp</c>).</summary>

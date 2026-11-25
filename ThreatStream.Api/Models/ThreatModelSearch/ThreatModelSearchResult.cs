@@ -36,7 +36,7 @@ public sealed class ThreatModelSearchResult : ThreatStreamResource
 	[JsonPropertyName("is_public")]
 	public bool? IsPublic { get; init; }
 
-	/// <summary>The tags on it (<c>tags</c>).</summary>
+	/// <summary>The tags on it (<c>tags</c>), sent as plain names or as tag objects.</summary>
 	[JsonPropertyName("tags")]
 	public IReadOnlyList<ThreatStreamTag> Tags { get; init; } = [];
 

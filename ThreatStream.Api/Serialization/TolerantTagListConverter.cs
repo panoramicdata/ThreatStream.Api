@@ -1,15 +1,17 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ThreatStream.Api.Models;
 
-namespace ThreatStream.Api.Models.ThreatModels;
+namespace ThreatStream.Api.Serialization;
 
 /// <summary>
-/// Reads a threat model entity's <c>tags</c>, which ThreatStream documents as a list of plain names
-/// (<c>["apt", "phishing"]</c>) but may send as tag objects (<c>[{"name": "apt", "tlp": "red"}]</c>). Each name becomes a
+/// Reads a list of tags, which ThreatStream sends as plain names (<c>["apt", "phishing"]</c>), as tag objects
+/// (<c>[{"name": "apt", "tlp": "red"}]</c>) or as a mix of both, depending on the endpoint. Each name becomes a
 /// <see cref="ThreatStreamTag"/> with only <see cref="ThreatStreamTag.Name"/> set; JSON nulls in the list are dropped.
-/// Writes tag objects.
+/// Writes tag objects. Registered in <see cref="ThreatStreamJson.Options"/>, so it applies to every
+/// <c>IReadOnlyList&lt;ThreatStreamTag&gt;</c> property.
 /// </summary>
-internal sealed class ThreatModelTagListConverter : JsonConverter<IReadOnlyList<ThreatStreamTag>>
+internal sealed class TolerantTagListConverter : JsonConverter<IReadOnlyList<ThreatStreamTag>>
 {
 	/// <inheritdoc />
 	public override IReadOnlyList<ThreatStreamTag> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -40,6 +42,15 @@ internal sealed class ThreatModelTagListConverter : JsonConverter<IReadOnlyList<
 	}
 
 	/// <inheritdoc />
+	/// <remarks>Writes each tag in turn: serializing the list itself would come back to this converter.</remarks>
 	public override void Write(Utf8JsonWriter writer, IReadOnlyList<ThreatStreamTag> value, JsonSerializerOptions options)
-		=> JsonSerializer.Serialize(writer, value, options);
+	{
+		writer.WriteStartArray();
+		foreach (var tag in value)
+		{
+			JsonSerializer.Serialize(writer, tag, options);
+		}
+
+		writer.WriteEndArray();
+	}
 }
