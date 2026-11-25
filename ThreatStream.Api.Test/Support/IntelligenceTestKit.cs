@@ -6,9 +6,6 @@ namespace ThreatStream.Api.Test.Support;
 /// <summary>Shared responses and assertions for the intelligence, import, snapshot and sandbox tests.</summary>
 internal static class IntelligenceTestKit
 {
-	/// <summary>An empty page, for requests whose response the test does not read.</summary>
-	public const string EmptyPage = """{"meta":{"limit":20,"offset":0,"next":null,"previous":null,"total_count":0},"objects":[]}""";
-
 	/// <summary>
 	/// An observable as <c>api/v2/intelligence/</c> returns it, built from the reference's attribute table and examples
 	/// (with an organisation and user anonymised), including quoted numbers and an unmodelled attribute.
@@ -116,20 +113,6 @@ internal static class IntelligenceTestKit
 		observable.UpdateId.Should().Be(2237854);
 		observable.Uuid.Should().Be("0a5b2a6e-8f6d-4f0c-9d3e-0123456789ab");
 		observable.AdditionalProperties["threatscore"].GetInt32().Should().Be(90);
-	}
-
-	/// <summary>Asserts that a read-only client refuses <paramref name="call"/> before anything is sent.</summary>
-	public static async Task ShouldBeRefusedWhenReadOnlyAsync(Func<ThreatStreamClient, CancellationToken, Task> call, string method, string path)
-	{
-		var stub = new StubHandler();
-		using var client = TestClient.Create(stub, o => o.IsReadOnly = true);
-
-		var act = () => call(client, TestContext.Current.CancellationToken);
-
-		var thrown = await act.Should().ThrowAsync<ThreatStreamReadOnlyException>();
-		thrown.Which.Method.Should().Be(method);
-		thrown.Which.Path.Should().Be(TestClient.BaseUrl + path);
-		stub.Calls.Should().BeEmpty();
 	}
 
 	/// <summary>The parts of a recorded multipart body as (name, file name, content type, text) tuples.</summary>

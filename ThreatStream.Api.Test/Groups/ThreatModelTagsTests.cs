@@ -52,7 +52,7 @@ public class ThreatModelTagsTests
 
 	[Fact]
 	public Task BulkTagAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelTagEntityType.Actor, Example, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ThreatModelTags.BulkTagAsync(ThreatModelTagEntityType.Actor, Example, ct), "POST", "api/v1/actor/bulk_tagging/");
 
 	[Fact]
 	public Task BulkTagAsync_Error_RaisesThreatStreamApiException()

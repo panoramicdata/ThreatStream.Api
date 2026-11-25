@@ -33,5 +33,5 @@ public partial class UserRolesTests
 
 	[Fact]
 	public Task ListAsync_ReadOnlyClient_IsAllowed()
-		=> ShouldBeAllowedWhenReadOnlyAsync((client, ct) => client.UserRoles.ListAsync(null, ct), RolesPageJson);
+		=> ReadWhenReadOnlyAsync((client, ct) => client.UserRoles.ListAsync(null, ct), RolesPageJson);
 }

@@ -30,7 +30,7 @@ public class ObservableWorkgroupsTests
 
 	[Fact]
 	public Task RestrictAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ObservableWorkgroups.RestrictAsync(Request, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ObservableWorkgroups.RestrictAsync(Request, ct), "POST", "api/v2/intelligence/bulk_workgroups/");
 
 	[Fact]
 	public Task RestrictAsync_Error_RaisesThreatStreamApiException()

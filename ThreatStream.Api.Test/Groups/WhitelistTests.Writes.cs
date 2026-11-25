@@ -87,19 +87,19 @@ public partial class WhitelistTests
 
 	[Fact]
 	public Task AddAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.AddAsync(AddExample, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.AddAsync(AddExample, ct), "POST", "api/v1/orgwhitelist/bulk/");
 
 	[Fact]
 	public Task UploadAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.UploadAsync(UploadExample, false, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.UploadAsync(UploadExample, false, ct), "POST", "api/v1/orgwhitelist/upload/");
 
 	[Fact]
 	public Task UpdateAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.UpdateAsync(1201, NoteUpdate, ct), "PATCH");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.UpdateAsync(1201, NoteUpdate, ct), "PATCH", "api/v1/orgwhitelist/1201/");
 
 	[Fact]
 	public Task DeleteAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.DeleteAsync(1201, ct), "DELETE");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Whitelist.DeleteAsync(1201, ct), "DELETE", "api/v1/orgwhitelist/1201/");
 
 	[Fact]
 	public Task AddAsync_Error_RaisesThreatStreamApiException()

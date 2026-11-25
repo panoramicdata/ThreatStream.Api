@@ -12,14 +12,6 @@ namespace ThreatStream.Api.Test.Support;
 /// </summary>
 internal static class ThreatModelsTestKit
 {
-	/// <summary>A one-object page in ThreatStream's list envelope.</summary>
-	public static string Page(string json) => $$"""
-		{
-			"meta": {"limit": 20, "offset": 0, "next": null, "previous": null, "total_count": 1},
-			"objects": [{{json}}]
-		}
-		""";
-
 	/// <summary>An entity of <paramref name="type"/> with every shared attribute, followed by the type's own <paramref name="extra"/> attributes.</summary>
 	public static string Entity(long id, string type, string extra) => $$"""
 		{
@@ -83,9 +75,6 @@ internal static class ThreatModelsTestKit
 	public static string LookupJson(string path, long id, string value) => $$"""
 		{"id": {{id}}, "value": "{{value}}", "display_name": "{{value}}", "resource_uri": "/api/v1/{{path}}/{{id}}/", "description": "From the STIX vocabulary"}
 		""";
-
-	/// <summary>An empty page.</summary>
-	public const string EmptyPage = """{"meta": {"limit": 20, "offset": 0, "next": null, "previous": null, "total_count": 0}, "objects": []}""";
 
 	/// <summary>The paging options most request tests send.</summary>
 	public static ListOptions Paging => new() { Limit = 10, Offset = 20 };
@@ -161,22 +150,6 @@ internal static class ThreatModelsTestKit
 		lookup.DisplayName.Should().Be(value);
 		lookup.ResourceUri.Should().Be($"/api/v1/{path}/{id}/");
 		lookup.AdditionalProperties["description"].GetString().Should().Be("From the STIX vocabulary");
-	}
-
-	/// <summary>
-	/// Asserts that a read-only client refuses <paramref name="call"/> (a create or update) before sending anything.
-	/// </summary>
-	public static async Task ShouldBeRefusedWhenReadOnlyAsync(Func<ThreatStreamClient, CancellationToken, Task> call, string method, string path)
-	{
-		var stub = new StubHandler();
-		using var client = TestClient.Create(stub, o => o.IsReadOnly = true);
-
-		var act = () => call(client, TestContext.Current.CancellationToken);
-
-		var thrown = await act.Should().ThrowAsync<ThreatStreamReadOnlyException>();
-		thrown.Which.Method.Should().Be(method);
-		thrown.Which.Message.Should().Contain(path);
-		stub.Calls.Should().BeEmpty();
 	}
 
 	/// <summary>Asserts that <paramref name="call"/> raises <see cref="ThreatStreamApiException"/> for a 404.</summary>

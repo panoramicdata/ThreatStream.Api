@@ -30,5 +30,7 @@
 	<ItemGroup>
 		<Using Include="AwesomeAssertions" />
 		<Using Include="Xunit" />
+		<Using Include="ThreatStream.Api.Test.Support.SideEffectTestKit" Static="true" />
+		<Using Include="ThreatStream.Api.Test.Support.PageJson" Static="true" />
 	</ItemGroup>
 </Project>

@@ -100,11 +100,11 @@ public class ObservableTagsTests
 
 	[Fact]
 	public Task BulkTagAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ObservableTags.BulkTagAsync(AddExample, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ObservableTags.BulkTagAsync(AddExample, ct), "POST", "api/v2/intelligence/bulk_tagging/");
 
 	[Fact]
 	public Task BulkTagMatchingAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ObservableTags.BulkTagMatchingAsync(QueryExample, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.ObservableTags.BulkTagMatchingAsync(QueryExample, ct), "POST", "api/v2/intelligence/bulk_tagging/");
 
 	[Fact]
 	public Task BulkTagMatchingAsync_JobAlreadyRunning_RaisesThreatStreamApiException()

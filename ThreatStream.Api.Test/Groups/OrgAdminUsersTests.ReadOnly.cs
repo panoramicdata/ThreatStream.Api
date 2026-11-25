@@ -29,5 +29,5 @@ public partial class OrgAdminUsersTests
 
 	[Fact]
 	public Task ListAsync_ReadOnlyClient_IsAllowed()
-		=> ShouldBeAllowedWhenReadOnlyAsync((client, ct) => client.OrgAdminUsers.ListAsync(null, ct), UsersPageJson);
+		=> ReadWhenReadOnlyAsync((client, ct) => client.OrgAdminUsers.ListAsync(null, ct), UsersPageJson);
 }

@@ -104,15 +104,15 @@ public partial class RulesTests
 
 	[Fact]
 	public Task CreateAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Rules.CreateAsync(ExampleRule, ct), "POST");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Rules.CreateAsync(ExampleRule, ct), "POST", "api/v1/rule/");
 
 	[Fact]
 	public Task UpdateAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Rules.UpdateAsync(56, NewTag, ct), "PATCH");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Rules.UpdateAsync(56, NewTag, ct), "PATCH", "api/v1/rule/56/");
 
 	[Fact]
 	public Task DeleteAsync_ReadOnlyClient_Refuses()
-		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Rules.DeleteAsync(210, ct), "DELETE");
+		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync((client, ct) => client.Rules.DeleteAsync(210, ct), "DELETE", "api/v1/rule/");
 
 	[Fact]
 	public Task CreateAsync_Error_RaisesThreatStreamApiException()

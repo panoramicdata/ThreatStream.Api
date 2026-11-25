@@ -60,13 +60,15 @@ public class AssociationsTests
 	public Task BulkAddAsync_ReadOnlyClient_Refuses()
 		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync(
 			(client, ct) => client.Associations.BulkAddAsync(AssociationEntityType.TipReport, 744, AssociationEntityType.Intelligence, Observables, ct),
-			"POST");
+			"POST",
+			"api/v1/tipreport/744/intelligence/bulk_add/");
 
 	[Fact]
 	public Task BulkRemoveAsync_ReadOnlyClient_Refuses()
 		=> SideEffectTestKit.ShouldBeRefusedWhenReadOnlyAsync(
 			(client, ct) => client.Associations.BulkRemoveAsync(AssociationEntityType.Ttp, 67, AssociationEntityType.Signature, Signature, ct),
-			"POST");
+			"POST",
+			"api/v1/ttp/67/signature/bulk_remove/");
 
 	[Fact]
 	public Task BulkAddAsync_Error_RaisesThreatStreamApiException()

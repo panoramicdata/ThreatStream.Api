@@ -49,34 +49,6 @@ internal static class UserAdministrationTestKit
 	/// <summary>A page of users, as <c>GET api/v1/orgadmin/</c> returns it.</summary>
 	public const string UsersPageJson = $$"""{"meta": {"limit": 20, "next": null, "offset": 0, "previous": null, "total_count": 1}, "objects": [{{UserJson}}]}""";
 
-	/// <summary>
-	/// Asserts that a read-only client refuses <paramref name="call"/> before sending anything, as every administrative
-	/// change in these categories must be refused.
-	/// </summary>
-	public static async Task ShouldBeRefusedWhenReadOnlyAsync(Func<ThreatStreamClient, CancellationToken, Task> call, string method, string path)
-	{
-		var stub = new StubHandler();
-		using var client = TestClient.Create(stub, o => o.IsReadOnly = true);
-
-		var act = () => call(client, TestContext.Current.CancellationToken);
-
-		var thrown = await act.Should().ThrowAsync<ThreatStreamReadOnlyException>();
-		thrown.Which.Method.Should().Be(method);
-		thrown.Which.Path.Should().Be(TestClient.BaseUrl + path);
-		stub.Calls.Should().BeEmpty();
-	}
-
-	/// <summary>Asserts that a read-only client still sends <paramref name="call"/>, a read.</summary>
-	public static async Task ShouldBeAllowedWhenReadOnlyAsync(Func<ThreatStreamClient, CancellationToken, Task> call, string response)
-	{
-		var stub = TestClient.Stub(response);
-		using var client = TestClient.Create(stub, o => o.IsReadOnly = true);
-
-		await call(client, TestContext.Current.CancellationToken);
-
-		stub.Calls.Should().ContainSingle().Which.Method.Should().Be(HttpMethod.Get);
-	}
-
 	/// <summary>Asserts every modelled field of <see cref="UserJson"/>.</summary>
 	public static void ShouldBeTheExampleUser(this OrganizationUser user)
 	{
