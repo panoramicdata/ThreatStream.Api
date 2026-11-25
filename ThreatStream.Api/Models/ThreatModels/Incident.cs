@@ -7,7 +7,7 @@ public sealed class Incident : ThreatModelEntity
 {
 	/// <summary>The incident's status (<c>status</c>); see <c>api/v1/incidentstatustype/</c>.</summary>
 	[JsonPropertyName("status")]
-	public ThreatModelReference? Status { get; init; }
+	public ThreatStreamReference? Status { get; init; }
 
 	/// <summary>Free-form text about the incident's status (<c>status_desc</c>).</summary>
 	[JsonPropertyName("status_desc")]
@@ -23,13 +23,13 @@ public sealed class Incident : ThreatModelEntity
 
 	/// <summary>The victim types the incident affected (<c>victims</c>); see <c>api/v1/victimtype/</c>.</summary>
 	[JsonPropertyName("victims")]
-	public IReadOnlyList<ThreatModelReference> Victims { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Victims { get; init; } = [];
 
 	/// <summary>The actors associated with the incident (<c>actors</c>).</summary>
 	[JsonPropertyName("actors")]
-	public IReadOnlyList<ThreatModelReference> Actors { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Actors { get; init; } = [];
 
 	/// <summary>The sandbox reports associated with the incident (<c>sandbox_reports</c>).</summary>
 	[JsonPropertyName("sandbox_reports")]
-	public IReadOnlyList<ThreatModelReference> SandboxReports { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> SandboxReports { get; init; } = [];
 }

@@ -92,5 +92,5 @@ public interface ISignatures
 	/// shape are inferred and unit-verified only.
 	/// </remarks>
 	[Get("api/v1/signature_type/")]
-	Task<ThreatStreamPage<ThreatModelReference>> ListTypesAsync([Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatStreamReference>> ListTypesAsync([Query] ListOptions? options, CancellationToken cancellationToken);
 }

@@ -14,5 +14,5 @@ public sealed class Signature : ThreatModelEntity
 	/// <see cref="Interfaces.ISignatures.ListTypesAsync"/>.
 	/// </summary>
 	[JsonPropertyName("s_type")]
-	public ThreatModelReference? SignatureType { get; init; }
+	public ThreatStreamReference? SignatureType { get; init; }
 }

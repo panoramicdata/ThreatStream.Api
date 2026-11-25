@@ -1,27 +1,28 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ThreatStream.Api.Serialization;
+using ThreatStream.Api.Models;
 
-namespace ThreatStream.Api.Models.ThreatModels;
+namespace ThreatStream.Api.Serialization;
 
 /// <summary>
-/// Reads a <see cref="ThreatModelReference"/> from a bare ID, a name or an object, and writes it as an object.
+/// Reads a <see cref="ThreatStreamReference"/> from a bare ID, an API path, a name or an object, and writes it as an
+/// object.
 /// </summary>
-internal sealed class ThreatModelReferenceConverter : JsonConverter<ThreatModelReference>
+internal sealed class ThreatStreamReferenceConverter : JsonConverter<ThreatStreamReference>
 {
 	/// <inheritdoc />
-	public override ThreatModelReference Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	public override ThreatStreamReference Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		=> reader.TokenType switch
 		{
-			JsonTokenType.Number => new ThreatModelReference { Id = TolerantReader.ParseInt64(TolerantReader.ReadNumberText(ref reader)!) },
+			JsonTokenType.Number => new ThreatStreamReference { Id = TolerantReader.ParseInt64(TolerantReader.ReadNumberText(ref reader)!) },
 			JsonTokenType.String => FromText(reader.GetString()!),
 			JsonTokenType.StartObject => FromShape(JsonSerializer.Deserialize<Shape>(ref reader, options)!),
-			_ => throw new JsonException($"Cannot read a threat model reference from a JSON {reader.TokenType}.")
+			_ => throw new JsonException($"Cannot read a reference from a JSON {reader.TokenType}.")
 		};
 
 	/// <inheritdoc />
-	public override void Write(Utf8JsonWriter writer, ThreatModelReference value, JsonSerializerOptions options)
+	public override void Write(Utf8JsonWriter writer, ThreatStreamReference value, JsonSerializerOptions options)
 		=> JsonSerializer.Serialize(writer, new Shape
 		{
 			Id = value.Id,
@@ -32,12 +33,19 @@ internal sealed class ThreatModelReferenceConverter : JsonConverter<ThreatModelR
 			AdditionalProperties = value.AdditionalProperties
 		}, options);
 
-	private static ThreatModelReference FromText(string text)
-		=> long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
-			? new ThreatModelReference { Id = id }
-			: new ThreatModelReference { Name = text };
+	private static ThreatStreamReference FromText(string text)
+	{
+		if (long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id))
+		{
+			return new ThreatStreamReference { Id = id };
+		}
 
-	private static ThreatModelReference FromShape(Shape shape)
+		return text.StartsWith("/api/", StringComparison.Ordinal)
+			? new ThreatStreamReference { ResourceUri = text }
+			: new ThreatStreamReference { Name = text };
+	}
+
+	private static ThreatStreamReference FromShape(Shape shape)
 		=> new()
 		{
 			Id = shape.Id,

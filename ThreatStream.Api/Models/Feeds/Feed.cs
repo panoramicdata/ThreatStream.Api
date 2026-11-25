@@ -58,7 +58,7 @@ public sealed class Feed : ThreatStreamResource
 
 	/// <summary>The organisation that owns it (<c>organization</c>).</summary>
 	[JsonPropertyName("organization")]
-	public FeedOrganization? Organization { get; init; }
+	public ThreatStreamReference? Organization { get; init; }
 
 	/// <summary>When it was created (<c>created_ts</c>).</summary>
 	[JsonPropertyName("created_ts")]

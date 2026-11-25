@@ -7,7 +7,7 @@ public sealed class Actor : ThreatModelEntity
 {
 	/// <summary>Other names the actor is known by (<c>aliases</c>).</summary>
 	[JsonPropertyName("aliases")]
-	public IReadOnlyList<ThreatModelReference> Aliases { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Aliases { get; init; } = [];
 
 	/// <summary>Whether the actor is a team rather than an individual (<c>is_team</c>).</summary>
 	[JsonPropertyName("is_team")]
@@ -18,7 +18,7 @@ public sealed class Actor : ThreatModelEntity
 	/// <c>api/v1/actorsophisticationtype/</c>.
 	/// </summary>
 	[JsonPropertyName("soph_type")]
-	public ThreatModelReference? SophisticationType { get; init; }
+	public ThreatStreamReference? SophisticationType { get; init; }
 
 	/// <summary>Free-form text about the actor's sophistication (<c>soph_desc</c>).</summary>
 	[JsonPropertyName("soph_desc")]
@@ -30,13 +30,13 @@ public sealed class Actor : ThreatModelEntity
 
 	/// <summary>The victim types the actor targets (<c>victims</c>); see <c>api/v1/victimtype/</c>.</summary>
 	[JsonPropertyName("victims")]
-	public IReadOnlyList<ThreatModelReference> Victims { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Victims { get; init; } = [];
 
 	/// <summary>The campaigns associated with the actor (<c>campaigns</c>).</summary>
 	[JsonPropertyName("campaigns")]
-	public IReadOnlyList<ThreatModelReference> Campaigns { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Campaigns { get; init; } = [];
 
 	/// <summary>The incidents associated with the actor (<c>incidents</c>).</summary>
 	[JsonPropertyName("incidents")]
-	public IReadOnlyList<ThreatModelReference> Incidents { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Incidents { get; init; } = [];
 }

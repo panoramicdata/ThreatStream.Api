@@ -39,7 +39,7 @@ public sealed partial class Rule : ThreatStreamResource
 
 	/// <summary>The investigation the rule created, if any (<c>investigation</c>).</summary>
 	[JsonPropertyName("investigation")]
-	public RuleReference? Investigation { get; init; }
+	public ThreatStreamReference? Investigation { get; init; }
 
 	/// <summary>When the rule was created (<c>created_ts</c>).</summary>
 	[JsonPropertyName("created_ts")]
@@ -55,7 +55,7 @@ public sealed partial class Rule : ThreatStreamResource
 
 	/// <summary>The organization that created the rule (<c>organization</c>).</summary>
 	[JsonPropertyName("organization")]
-	public RuleReference? Organization { get; init; }
+	public ThreatStreamReference? Organization { get; init; }
 
 	/// <summary>The ID of the user who created the rule (<c>user_id</c>).</summary>
 	[JsonPropertyName("user_id")]

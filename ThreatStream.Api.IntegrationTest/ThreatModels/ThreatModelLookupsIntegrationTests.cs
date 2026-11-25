@@ -28,7 +28,7 @@ public class ThreatModelLookupsIntegrationTests(ThreatStreamFixture fixture)
 	public async Task IncidentStatusTypes_ListAsync_ReturnsValues()
 		=> ShouldBeLookups(await fixture.Client.IncidentStatusTypes.ListAsync(null, Token));
 
-	private static void ShouldBeLookups(ThreatStreamPage<ThreatModelReference> page)
+	private static void ShouldBeLookups(ThreatStreamPage<ThreatStreamReference> page)
 	{
 		page.Objects.Should().NotBeEmpty("every deployment has built-in values");
 		page.Objects.Should().OnlyContain(v => v.Id > 0 && (v.Value ?? v.DisplayName ?? v.Name) != null);

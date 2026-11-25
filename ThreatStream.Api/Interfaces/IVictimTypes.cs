@@ -16,5 +16,5 @@ public interface IVictimTypes
 	/// so the method and response shape follow ThreatStream's other lists. Unit-verified only.
 	/// </remarks>
 	[Get("api/v1/victimtype/")]
-	Task<ThreatStreamPage<ThreatModelReference>> ListAsync([Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatStreamReference>> ListAsync([Query] ListOptions? options, CancellationToken cancellationToken);
 }

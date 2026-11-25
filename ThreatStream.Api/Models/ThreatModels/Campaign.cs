@@ -7,7 +7,7 @@ public sealed class Campaign : ThreatModelEntity
 {
 	/// <summary>The campaign's status (<c>status</c>); see <c>api/v1/campaignstatus/</c>.</summary>
 	[JsonPropertyName("status")]
-	public ThreatModelReference? Status { get; init; }
+	public ThreatStreamReference? Status { get; init; }
 
 	/// <summary>When the campaign was first known to be active (<c>start_date</c>).</summary>
 	[JsonPropertyName("start_date")]
@@ -19,13 +19,13 @@ public sealed class Campaign : ThreatModelEntity
 
 	/// <summary>The victim types the campaign targets (<c>victims</c>); see <c>api/v1/victimtype/</c>.</summary>
 	[JsonPropertyName("victims")]
-	public IReadOnlyList<ThreatModelReference> Victims { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Victims { get; init; } = [];
 
 	/// <summary>The actors associated with the campaign (<c>actors</c>).</summary>
 	[JsonPropertyName("actors")]
-	public IReadOnlyList<ThreatModelReference> Actors { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Actors { get; init; } = [];
 
 	/// <summary>The incidents associated with the campaign (<c>incidents</c>).</summary>
 	[JsonPropertyName("incidents")]
-	public IReadOnlyList<ThreatModelReference> Incidents { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Incidents { get; init; } = [];
 }

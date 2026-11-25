@@ -10,16 +10,16 @@ public sealed partial class ThreatBulletin
 	/// that can see the bulletin.
 	/// </summary>
 	[JsonPropertyName("attachments")]
-	public IReadOnlyList<ThreatModelReference> Attachments { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Attachments { get; init; } = [];
 
 	/// <summary>
 	/// Associated import sessions (<c>import_sessions</c>). Their observables may not also be in
 	/// <see cref="ThreatModelEntity.Intelligence"/>, so read both for the complete set.
 	/// </summary>
 	[JsonPropertyName("import_sessions")]
-	public IReadOnlyList<ThreatModelReference> ImportSessions { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> ImportSessions { get; init; } = [];
 
 	/// <summary>Associated sandbox reports (<c>sandbox_reports</c>).</summary>
 	[JsonPropertyName("sandbox_reports")]
-	public IReadOnlyList<ThreatModelReference> SandboxReports { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> SandboxReports { get; init; } = [];
 }

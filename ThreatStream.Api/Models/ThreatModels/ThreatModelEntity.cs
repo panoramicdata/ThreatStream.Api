@@ -8,7 +8,7 @@ namespace ThreatStream.Api.Models.ThreatModels;
 /// </summary>
 /// <remarks>
 /// Attributes the reference calls "related" (associations, circles, lookup values) arrive as IDs or as objects; both read
-/// into <see cref="ThreatModelReference"/>. Each list is empty, never <see langword="null"/>, when ThreatStream sends
+/// into <see cref="ThreatStreamReference"/>. Each list is empty, never <see langword="null"/>, when ThreatStream sends
 /// none.
 /// </remarks>
 public abstract class ThreatModelEntity : ThreatStreamResource
@@ -39,7 +39,7 @@ public abstract class ThreatModelEntity : ThreatStreamResource
 
 	/// <summary>The trusted circles the entity is shared with (<c>circles</c>).</summary>
 	[JsonPropertyName("circles")]
-	public IReadOnlyList<ThreatModelReference> Circles { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Circles { get; init; } = [];
 
 	/// <summary>The entity's review state (<c>publication_status</c>).</summary>
 	[JsonPropertyName("publication_status")]
@@ -71,7 +71,7 @@ public abstract class ThreatModelEntity : ThreatStreamResource
 
 	/// <summary>The organisation that created the entity (<c>organization</c>).</summary>
 	[JsonPropertyName("organization")]
-	public ThreatModelReference? Organization { get; init; }
+	public ThreatStreamReference? Organization { get; init; }
 
 	/// <summary>The ID of the user that created the entity (<c>owner_user_id</c>).</summary>
 	[JsonPropertyName("owner_user_id")]
@@ -79,7 +79,7 @@ public abstract class ThreatModelEntity : ThreatStreamResource
 
 	/// <summary>The user that created the entity (<c>owner_user</c>).</summary>
 	[JsonPropertyName("owner_user")]
-	public ThreatModelReference? OwnerUser { get; init; }
+	public ThreatStreamReference? OwnerUser { get; init; }
 
 	/// <summary>The ID of the threat feed that provided the entity (<c>feed_id</c>).</summary>
 	[JsonPropertyName("feed_id")]
@@ -115,7 +115,7 @@ public abstract class ThreatModelEntity : ThreatStreamResource
 
 	/// <summary>The workgroups the entity is visible to (<c>workgroups</c>).</summary>
 	[JsonPropertyName("workgroups")]
-	public IReadOnlyList<ThreatModelReference> Workgroups { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Workgroups { get; init; } = [];
 
 	/// <summary>On ThreatStream OnPrem, whether the entity is remote, stored on the cloud (<c>remote_api</c>).</summary>
 	[JsonPropertyName("remote_api")]
@@ -123,13 +123,13 @@ public abstract class ThreatModelEntity : ThreatStreamResource
 
 	/// <summary>The observables associated with the entity (<c>intelligence</c>).</summary>
 	[JsonPropertyName("intelligence")]
-	public IReadOnlyList<ThreatModelReference> Intelligence { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Intelligence { get; init; } = [];
 
 	/// <summary>The signatures associated with the entity (<c>signatures</c>).</summary>
 	[JsonPropertyName("signatures")]
-	public IReadOnlyList<ThreatModelReference> Signatures { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Signatures { get; init; } = [];
 
 	/// <summary>The TTPs associated with the entity (<c>ttps</c>).</summary>
 	[JsonPropertyName("ttps")]
-	public IReadOnlyList<ThreatModelReference> Ttps { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Ttps { get; init; } = [];
 }

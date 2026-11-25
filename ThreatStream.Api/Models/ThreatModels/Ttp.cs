@@ -10,5 +10,5 @@ public sealed class Ttp : ThreatModelEntity
 {
 	/// <summary>Associated actors (<c>actors</c>).</summary>
 	[JsonPropertyName("actors")]
-	public IReadOnlyList<ThreatModelReference> Actors { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Actors { get; init; } = [];
 }

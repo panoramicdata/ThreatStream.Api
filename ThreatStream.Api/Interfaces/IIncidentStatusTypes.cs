@@ -17,5 +17,5 @@ public interface IIncidentStatusTypes
 	/// examples.
 	/// </remarks>
 	[Get("api/v1/incidentstatustype/")]
-	Task<ThreatStreamPage<ThreatModelReference>> ListAsync([Query] ListOptions? options, CancellationToken cancellationToken);
+	Task<ThreatStreamPage<ThreatStreamReference>> ListAsync([Query] ListOptions? options, CancellationToken cancellationToken);
 }

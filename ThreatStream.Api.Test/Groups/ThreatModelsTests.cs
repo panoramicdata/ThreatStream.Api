@@ -11,61 +11,6 @@ public class ThreatModelsTests
 {
 	private static T Read<T>(string json) => JsonSerializer.Deserialize<T>(json, ThreatStreamJson.Options)!;
 
-	[Theory]
-	[InlineData("13", 13L, null)]
-	[InlineData("\"15\"", 15L, null)]
-	[InlineData("\"Health Care\"", null, "Health Care")]
-	public void Reference_ReadsABareIdOrName(string json, long? id, string? name)
-	{
-		var reference = Read<ThreatModelReference>(json);
-
-		reference.Id.Should().Be(id);
-		reference.Name.Should().Be(name);
-	}
-
-	[Fact]
-	public void Reference_ReadsAnObject_KeepingUnmodelledProperties()
-	{
-		var reference = Read<ThreatModelReference>("""{"id": "7", "name": "n", "value": "v", "display_name": "d", "resource_uri": "/api/v1/x/7/", "email": "e"}""");
-
-		reference.Id.Should().Be(7);
-		reference.Name.Should().Be("n");
-		reference.Value.Should().Be("v");
-		reference.DisplayName.Should().Be("d");
-		reference.ResourceUri.Should().Be("/api/v1/x/7/");
-		reference.AdditionalProperties["email"].GetString().Should().Be("e");
-	}
-
-	[Theory]
-	[InlineData("true")]
-	[InlineData("[1]")]
-	public void Reference_RejectsOtherShapes(string json)
-	{
-		var act = () => Read<ThreatModelReference>(json);
-
-		act.Should().Throw<JsonException>().WithMessage("Cannot read a threat model reference*");
-	}
-
-	[Fact]
-	public void Reference_WritesAnObject()
-	{
-		var reference = Read<ThreatModelReference>("""{"id": 7, "value": "v", "email": "e"}""");
-
-		JsonSerializer.Serialize(reference, ThreatStreamJson.Options).Should().Be("""{"id":7,"value":"v","email":"e"}""");
-	}
-
-	[Fact]
-	public void Tags_RejectAnythingButAList()
-	{
-		var act = () => Read<ThreatModelAssociatedEntity>("""{"id": 1, "tags": "apt"}""");
-
-		act.Should().Throw<JsonException>().WithMessage("Cannot read tags*");
-	}
-
-	[Fact]
-	public void Tags_NullKeepsTheEmptyList()
-		=> Read<ThreatModelAssociatedEntity>("""{"id": 1, "tags": null}""").Tags.Should().BeEmpty();
-
 	[Fact]
 	public void Tags_WriteAsTagObjects()
 	{

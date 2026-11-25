@@ -30,5 +30,5 @@ public sealed class Workgroup : ThreatStreamResource
 
 	/// <summary>The organization that owns the workgroup: yours (<c>owner_org</c>).</summary>
 	[JsonPropertyName("owner_org")]
-	public WorkgroupOrganization? OwnerOrg { get; init; }
+	public ThreatStreamReference? OwnerOrg { get; init; }
 }

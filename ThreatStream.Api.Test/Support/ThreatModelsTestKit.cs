@@ -143,7 +143,7 @@ internal static class ThreatModelsTestKit
 	}
 
 	/// <summary>Asserts every attribute of a page holding one <see cref="LookupJson"/> value.</summary>
-	public static void ShouldBeTheLookup(this ThreatStreamPage<ThreatModelReference> page, string path, long id, string value)
+	public static void ShouldBeTheLookup(this ThreatStreamPage<ThreatStreamReference> page, string path, long id, string value)
 	{
 		var lookup = page.Objects.Should().ContainSingle().Subject;
 		lookup.Id.Should().Be(id);

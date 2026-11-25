@@ -9,11 +9,11 @@ public sealed partial class AttackPattern : ThreatModelEntity
 {
 	/// <summary>Other names the attack pattern is known by (<c>aliases</c>).</summary>
 	[JsonPropertyName("aliases")]
-	public IReadOnlyList<ThreatModelReference> Aliases { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> Aliases { get; init; } = [];
 
 	/// <summary>The user the attack pattern is assigned to (<c>assignee_user</c>).</summary>
 	[JsonPropertyName("assignee_user")]
-	public ThreatModelReference? AssigneeUser { get; init; }
+	public ThreatStreamReference? AssigneeUser { get; init; }
 
 	/// <summary>The body text (<c>body</c>), in <see cref="BodyContentType"/>.</summary>
 	[JsonPropertyName("body")]
@@ -37,7 +37,7 @@ public sealed partial class AttackPattern : ThreatModelEntity
 
 	/// <summary>The references (sources) about the attack pattern (<c>external_references</c>).</summary>
 	[JsonPropertyName("external_references")]
-	public IReadOnlyList<ThreatModelReference> ExternalReferences { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> ExternalReferences { get; init; } = [];
 
 	/// <summary>Whether MITRE describes the attack pattern (<c>is_mitre</c>).</summary>
 	[JsonPropertyName("is_mitre")]
@@ -52,7 +52,7 @@ public sealed partial class AttackPattern : ThreatModelEntity
 
 	/// <summary>The Lockheed Martin kill chain stages, such as <c>delivery</c> (<c>killchainstages</c>).</summary>
 	[JsonPropertyName("killchainstages")]
-	public IReadOnlyList<ThreatModelReference> KillChainStages { get; init; } = [];
+	public IReadOnlyList<ThreatStreamReference> KillChainStages { get; init; } = [];
 
 	/// <summary>The users' votes on the attack pattern (<c>votes</c>), as ThreatStream sends them.</summary>
 	[JsonPropertyName("votes")]
