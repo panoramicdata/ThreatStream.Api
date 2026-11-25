@@ -6,5 +6,5 @@ Paths include the `/api/vN/` prefix and are relative to the base URL. One row pe
 
 | Method | Path | Client method | Test |
 |---|---|---|---|
-| POST | `/api/v1/{entity_type}/{entity_id}/{associated_entity_type}/bulk_add/` |  |  |
-| POST | `/api/v1/{entity_type}/{entity_id}/{associated_entity_type}/bulk_remove/` |  |  |
+| POST | `/api/v1/{entity_type}/{entity_id}/{associated_entity_type}/bulk_add/` | `IAssociations.BulkAddAsync` | `AssociationsTests.BulkAddAsync_PostsTheIds` |
+| POST | `/api/v1/{entity_type}/{entity_id}/{associated_entity_type}/bulk_remove/` | `IAssociations.BulkRemoveAsync` | `AssociationsTests.BulkRemoveAsync_PostsTheIds` |
