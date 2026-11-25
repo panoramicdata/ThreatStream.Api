@@ -82,7 +82,10 @@ allow-list, a converter, a shared model), stop and ask the lead, saying exactly 
 - **Shared models already in `ThreatStream.Api.Models`** (reuse, do not duplicate): `ThreatStreamPage<T>`,
   `ThreatStreamPageMeta`, `ThreatStreamObject` (keeps unmodelled properties in `AdditionalProperties`),
   `ThreatStreamResource` (adds `long Id` and `ResourceUri`), `ListOptions` (`Limit`, `Offset`, `OrderBy`), `Tlp`,
-  `ThreatStreamTag`, `ThreatStreamMultipartRequest` and `ThreatStreamFile`.
+  `ThreatStreamTag`, `ThreatStreamMultipartRequest`, `ThreatStreamFile`, `ThreatStreamReference` (a reference to another
+  object, read from an object, a bare ID, an API path or a name: use it for every `organization`-style attribute),
+  `GenericAsyncResult` (an asynchronous job), and `BulkTagRequest`/`TagChangeRequest` (bulk tagging bodies). Threat
+  model types share `ThreatModelType`, `ThreatModelEntity`, `ThreatModelUpdateRequest` and the STIX association bases.
 - A model one category defines and another needs (the observable model, for example) belongs to the category that owns
   the resource (`Models/Intelligence/Observable.cs`); the other category references it and says so in its report.
 
@@ -103,11 +106,15 @@ allow-list, a converter, a shared model), stop and ask the lead, saying exactly 
     `[AliasAs("q")] public string? Query`. Lists of values are sent comma-separated (`id__in=1,2,3`) automatically.
     Use `ListOptions` itself when the endpoint has no filters of its own.
   - get: `Task<X> GetAsync(long id, CancellationToken cancellationToken)`.
-  - create: `Task<X> CreateAsync([Body] XCreateRequest request, CancellationToken cancellationToken)`.
-  - update (PATCH): `Task<X> UpdateAsync(long id, [Body] XUpdateRequest request, CancellationToken cancellationToken)`.
+  - create: `Task<X?> CreateAsync([Body] XCreateRequest request, CancellationToken cancellationToken)`.
+  - update (PATCH): `Task<X?> UpdateAsync(long id, [Body] XUpdateRequest request, CancellationToken cancellationToken)`.
   - delete: `Task DeleteAsync(long id, CancellationToken cancellationToken)`.
   - actions (`approve_all`, `unlock`, `bulk_add`, `clone`...) get their own method named for the action, returning the
     documented response model (a job or import session reference for asynchronous work).
+  - Every operation other than a GET that returns a model returns it nullable (`Task<X?>`), with "or `null` when
+    ThreatStream answers without a body" in `<returns>`: ThreatStream may answer 202 or 204 with no body, which Refit reads
+    as `null`. So does a GET that starts a job (`async_result=true`). Read-only POSTs (an enrichment lookup) are exempt.
+    Asynchronous jobs return the shared `GenericAsyncResult`, which `ThreatStreamClient.RunAsyncJobAsync` drives.
 - Responses that are not JSON: `Task<string>` for text (CSV exports, user audit reports), `Task<Stream>` or
   `Task<HttpContent>` for a download the caller reads and disposes. **Never** return `HttpResponseMessage` or
   `ApiResponse<T>`: they bypass the error mapping.
@@ -138,7 +145,8 @@ allow-list, a converter, a shared model), stop and ask the lead, saying exactly 
 - `[JsonPropertyName("wire")]` on every property. IDs `long` (or `long?` when optional); counts `int?`/`long?`; scores
   `int?` or `double?`; booleans `bool?`; timestamps `DateTimeOffset?` (the shared options read ISO text without an offset
   as UTC, and epoch seconds); lists `IReadOnlyList<T>` defaulting to `[]`; strings `string?`. `ThreatStreamJson.Options`
-  already reads ThreatStream's loose types (`"1"`, `"true"`, `""`, quoted numbers), so do not add converters.
+  already reads ThreatStream's loose types (`"1"`, `"true"`, `""`, quoted numbers, and tag lists of plain names or tag
+  objects), so do not add converters.
 - Enums only for small closed sets, first member `Unknown = 0`, the rest with `[JsonStringEnumMemberName("wire")]`
   (unrecognised values read as `Unknown`). Use `Tlp` for TLP. Prefer `string` for open or growing sets (`itype`,
   `threat_type`, sandbox platforms).
@@ -173,6 +181,11 @@ allow-list, a converter, a shared model), stop and ask the lead, saying exactly 
     unique names; `[JsonPropertyName]` (or `[AliasAs]` on query options) on every model property; timestamps typed
     `DateTimeOffset?`. If an endpoint genuinely needs an exception (a path without a trailing slash that a live
     deployment requires), ask the lead.
+  - `EmptyBodyTests`: every non-GET operation returning a model is nullable and listed there, with a test that it
+    returns `null` on 202 and 204 without a body.
+- Shared test helpers are imported everywhere: `ShouldBeRefusedWhenReadOnlyAsync(call, method, path)` and
+  `ReadWhenReadOnlyAsync` (`Support/SideEffectTestKit`), `EmptyPage` and `Page(json)` (`Support/PageJson`). Use them
+  rather than writing a category copy.
 - Throwaway scripts and captured responses go under `temp/<your category>/` (git-ignored), never the shared scratchpad
   root, so parallel agents do not overwrite each other.
 
