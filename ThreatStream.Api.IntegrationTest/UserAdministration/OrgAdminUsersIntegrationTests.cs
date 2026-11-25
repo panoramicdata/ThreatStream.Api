@@ -4,8 +4,8 @@ namespace ThreatStream.Api.IntegrationTest.UserAdministration;
 
 /// <summary>
 /// Reads the organisation's users (needs an Org Admin account). Creating, changing, unlocking and deleting users are
-/// never run live. Assertions name single fields only: a failing structural assertion would print a user object, which
-/// can carry an API key.
+/// never run live. Assertions are made on user IDs only, never on user objects: a failing assertion prints its subject,
+/// and a user object can carry an API key and colleagues' details.
 /// </summary>
 [Collection(ThreatStreamTestGroup.Name)]
 public class OrgAdminUsersIntegrationTests(ThreatStreamFixture fixture)
@@ -16,11 +16,10 @@ public class OrgAdminUsersIntegrationTests(ThreatStreamFixture fixture)
 		var cancellationToken = TestContext.Current.CancellationToken;
 
 		var page = await fixture.Client.OrgAdminUsers.ListAsync(new ListOptions { Limit = 1 }, cancellationToken);
-		var listed = page.Objects.Should().ContainSingle("the account running the tests is itself a user").Subject;
-		var user = await fixture.Client.OrgAdminUsers.GetAsync(listed.UserId, cancellationToken);
+		var userId = page.Objects.Select(u => u.UserId).Should().ContainSingle("the account running the tests is itself a user").Subject;
+		var user = await fixture.Client.OrgAdminUsers.GetAsync(userId, cancellationToken);
 
-		listed.UserId.Should().BePositive();
-		user.UserId.Should().Be(listed.UserId);
-		user.Email.Should().Be(listed.Email);
+		userId.Should().BePositive();
+		user.UserId.Should().Be(userId);
 	}
 }
