@@ -11,9 +11,7 @@ public class WhitelistIntegrationTests(ThreatStreamFixture fixture)
 		// The whitelist may be empty, so only the shape of the page is checked.
 		var page = await fixture.Client.Whitelist.ListAsync(new WhitelistListOptions { Limit = 5 }, TestContext.Current.CancellationToken);
 
-		page.Meta.Should().NotBeNull();
-		page.Objects.Count.Should().BeLessThanOrEqualTo(5);
-		page.Objects.Should().AllSatisfy(e =>
+		page.ShouldBeAPageOf(5, e =>
 		{
 			e.Id.Should().BePositive();
 			e.Value.Should().NotBeNullOrEmpty();

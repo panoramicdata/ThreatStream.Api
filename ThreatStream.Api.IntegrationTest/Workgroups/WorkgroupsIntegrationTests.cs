@@ -9,9 +9,7 @@ public class WorkgroupsIntegrationTests(ThreatStreamFixture fixture)
 		// An organization may have no workgroups, so only the shape of the page is checked.
 		var page = await fixture.Client.Workgroups.ListAsync(new Models.ListOptions { Limit = 5 }, TestContext.Current.CancellationToken);
 
-		page.Meta.Should().NotBeNull();
-		page.Objects.Count.Should().BeLessThanOrEqualTo(5);
-		page.Objects.Should().AllSatisfy(w =>
+		page.ShouldBeAPageOf(5, w =>
 		{
 			w.Id.Should().BePositive();
 			w.Name.Should().NotBeNullOrWhiteSpace();

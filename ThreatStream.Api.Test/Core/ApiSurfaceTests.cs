@@ -1,6 +1,7 @@
 using Refit;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using static ThreatStream.Api.Test.Support.Offenders;
 
 namespace ThreatStream.Api.Test.Core;
 
@@ -25,12 +26,6 @@ public class ApiSurfaceTests
 		&& (ns == ModelNamespace || ns.StartsWith(ModelNamespace + ".", StringComparison.Ordinal))
 		&& t.IsClass
 		&& t != typeof(ThreatStream.Api.Models.ThreatStreamFile))];
-
-	private static void AssertNone(IEnumerable<string> offending, string because)
-	{
-		var list = offending.ToList();
-		list.Should().BeEmpty("{0}; found {1}:{2}{3}", because, list.Count, Environment.NewLine, string.Join(Environment.NewLine, list));
-	}
 
 	[Fact]
 	public void PublicApi_HasNoOptionalParameters()

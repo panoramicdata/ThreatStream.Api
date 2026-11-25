@@ -1,6 +1,7 @@
 using Refit;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using static ThreatStream.Api.Test.Support.Offenders;
 
 namespace ThreatStream.Api.Test.Core;
 
@@ -109,12 +110,6 @@ public partial class InventoryTests
 	[InlineData("oauth/token", "oauth/token")]
 	public void Normalize_IgnoresSlashesQueriesAndPlaceholderNames(string path, string expected)
 		=> Normalize(path).Should().Be(expected);
-
-	private static void AssertNone(IEnumerable<string> offending, string because)
-	{
-		var list = offending.ToList();
-		list.Should().BeEmpty("{0}; found {1}:{2}{3}", because, list.Count, Environment.NewLine, string.Join(Environment.NewLine, list));
-	}
 
 	/// <summary>
 	/// The path without its query string and leading or trailing slashes, with every placeholder (<c>{name}</c> or the

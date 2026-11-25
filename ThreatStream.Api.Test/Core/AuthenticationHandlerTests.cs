@@ -81,12 +81,9 @@ public partial class AuthenticationHandlerTests
 	[Fact]
 	public async Task OAuth_Unauthorized_RenewsOnceAndResends()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-1"));
-		stub.Enqueue(HttpStatusCode.Unauthorized);
-		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-2"));
-		stub.Enqueue(HttpStatusCode.OK, Trend);
+		var stub = RenewalStub(HttpStatusCode.OK, Trend);
 		using var client = OAuthClient(stub, new ManualTimeProvider());
+
 
 		var trend = await client.Confidence.GetTrendAsync("a", Ct);
 
@@ -97,12 +94,9 @@ public partial class AuthenticationHandlerTests
 	[Fact]
 	public async Task OAuth_UnauthorizedTwice_RaisesTheSecond401()
 	{
-		var stub = new StubHandler();
-		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-1"));
-		stub.Enqueue(HttpStatusCode.Unauthorized);
-		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-2"));
-		stub.Enqueue(HttpStatusCode.Unauthorized, """{"detail":"Token revoked"}""");
+		var stub = RenewalStub(HttpStatusCode.Unauthorized, """{"detail":"Token revoked"}""");
 		using var client = OAuthClient(stub, new ManualTimeProvider());
+
 
 		await TestClient.ShouldFailWithAsync(() => client.Confidence.GetTrendAsync("a", Ct), HttpStatusCode.Unauthorized, "Token revoked");
 		stub.Calls.Should().HaveCount(4);
@@ -170,6 +164,17 @@ public partial class AuthenticationHandlerTests
 
 		logger.Messages.Should().Contain("ThreatStream OAuth token obtained, valid for 00:15:00");
 		logger.Messages.Should().NotContain(m => m.Contains("secret", StringComparison.Ordinal));
+	}
+
+	/// <summary>A token, a 401, a second token, then <paramref name="status"/> with <paramref name="body"/> for the resent request.</summary>
+	private static StubHandler RenewalStub(HttpStatusCode status, string body)
+	{
+		var stub = new StubHandler();
+		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-1"));
+		stub.Enqueue(HttpStatusCode.Unauthorized);
+		stub.Enqueue(HttpStatusCode.OK, TestClient.TokenJson("token-2"));
+		stub.Enqueue(status, body);
+		return stub;
 	}
 
 	private static Task<HttpResponseMessage> SendStreamAsync(ThreatStreamClient client)

@@ -11,7 +11,8 @@ public class SsoHistoryIntegrationTests(ThreatStreamFixture fixture)
 	{
 		var page = await fixture.Client.SsoHistory.ListAsync(new ListOptions { Limit = 5 }, TestContext.Current.CancellationToken);
 
-		page.Meta.Should().NotBeNull();
-		page.Objects.Should().AllSatisfy(a => a.Id.Should().BePositive());
+
+		page.ShouldBeAPageOf(5, a => a.Id.Should().BePositive());
+
 	}
 }

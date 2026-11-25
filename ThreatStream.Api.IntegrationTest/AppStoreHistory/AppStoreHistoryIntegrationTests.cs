@@ -10,7 +10,8 @@ public class AppStoreHistoryIntegrationTests(ThreatStreamFixture fixture)
 	{
 		var page = await fixture.Client.AppStoreHistory.ListAsync(new ListOptions { Limit = 5 }, TestContext.Current.CancellationToken);
 
-		page.Meta.Should().NotBeNull();
-		page.Objects.Should().AllSatisfy(a => a.Id.Should().BePositive());
+
+		page.ShouldBeAPageOf(5, a => a.Id.Should().BePositive());
+
 	}
 }
